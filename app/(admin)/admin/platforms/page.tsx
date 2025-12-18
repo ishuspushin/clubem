@@ -11,13 +11,18 @@ import { mockPlatforms } from '@/app/data/mock';
 import { Platform } from '@/app/types';
 import { PlusIcon, EditIcon, TrashIcon } from '@/app/components/icons';
 
+interface PlatformFormData {
+  name: string;
+  status: 'active' | 'disabled';
+}
+
 export default function PlatformsPage() {
   const [platforms, setPlatforms] = useState<Platform[]>(mockPlatforms);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlatform, setEditingPlatform] = useState<Platform | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<PlatformFormData>({
     name: '',
-    status: 'active' as 'active' | 'disabled',
+    status: 'active',
   });
 
   const handleOpenModal = (platform?: Platform) => {
@@ -71,7 +76,7 @@ export default function PlatformsPage() {
     setPlatforms(prev =>
       prev.map(p =>
         p.id === id 
-          ? { ...p, status: p.status === 'active' ? 'disabled' : 'active', lastUpdated: today } 
+          ? { ...p, status: (p.status === 'active' ? 'disabled' : 'active') as 'active' | 'disabled', lastUpdated: today } 
           : p
       )
     );

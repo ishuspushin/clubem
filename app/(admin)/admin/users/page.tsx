@@ -12,15 +12,22 @@ import { mockUsers } from '@/app/data/mock';
 import { User, UserRole } from '@/app/types';
 import { PlusIcon, EditIcon } from '@/app/components/icons';
 
+interface UserFormData {
+  name: string;
+  email: string;
+  role: UserRole;
+  status: 'active' | 'inactive';
+}
+
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<UserFormData>({
     name: '',
     email: '',
-    role: 'staff' as UserRole,
-    status: 'active' as 'active' | 'inactive',
+    role: 'staff',
+    status: 'active',
   });
 
   const handleOpenModal = (user?: User) => {
@@ -49,7 +56,7 @@ export default function UsersPage() {
       setUsers(prev =>
         prev.map(u =>
           u.id === editingUser.id
-            ? { ...u, ...formData }
+            ? { ...u, name: formData.name, email: formData.email, role: formData.role, status: formData.status }
             : u
         )
       );
@@ -71,7 +78,7 @@ export default function UsersPage() {
     setUsers(prev =>
       prev.map(u =>
         u.id === id 
-          ? { ...u, status: u.status === 'active' ? 'inactive' : 'active' } 
+          ? { ...u, status: (u.status === 'active' ? 'inactive' : 'active') as 'active' | 'inactive' } 
           : u
       )
     );
