@@ -50,7 +50,7 @@ export default function FieldsPage() {
       setFields(prev =>
         prev.map(f =>
           f.id === editingField.id
-            ? { ...f, ...formData }
+            ? { ...f, ...formData, type: formData.type as FieldConfig['type'] }
             : f
         )
       );

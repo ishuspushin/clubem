@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/src/utils/prisma';
-import { getAuthenticatedUser, requireAdmin, unauthorizedResponse, forbiddenResponse } from '@/app/api/auth/helpers';
+import { requireAdmin, unauthorizedResponse, forbiddenResponse } from '@/app/api/auth/helpers';
 import { PlatformStatus } from '@/generated/prisma/enums';
 
 // PATCH update platform (admin only)
