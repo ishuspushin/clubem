@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/src/utils/prisma';
 import { getAuthenticatedUserFromId, requireAdmin, unauthorizedResponse, forbiddenResponse } from '@/app/api/auth/helpers';
-import { PlatformStatus } from '@/generated/prisma/enums';
+import { PlatformStatus } from '@prisma/client';
 
 // GET all platforms (all authenticated users can read)
 export async function GET(request: NextRequest) {

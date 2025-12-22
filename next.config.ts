@@ -1,12 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Ensure Prisma generated files and binaries are included in serverless functions
-  outputFileTracingIncludes: {
-    "**": [
-      "./generated/prisma/**",
-    ],
-  },
+  /* config options here */
 };
 
 export default nextConfig;

@@ -1,4 +1,4 @@
-import { UserRole, PlatformStatus } from "@/generated/prisma/enums";
+import { UserRole, PlatformStatus } from "@prisma/client";
 import { prisma } from "@/src/utils/prisma";
 import bcrypt from "bcrypt";
 import { env } from "@/src/utils/consts";

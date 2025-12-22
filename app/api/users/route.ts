@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/src/utils/prisma';
 import bcrypt from 'bcrypt';
-import { UserRole } from '@/generated/prisma/enums';
+import { UserRole } from '@prisma/client';
 
 // GET all users
 export async function GET() {
