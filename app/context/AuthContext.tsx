@@ -1,10 +1,12 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, UserRole, AuthState } from '@/app/types';
+import { UserRole, AuthState, type User } from '@/app/types';
 
 interface AuthContextType extends AuthState {
-  login: (username: string, password: string, role: UserRole) => boolean;
+  login: (username: string, password: string, role: UserRole) => Promise<{ success: boolean; error?: string; needsApproval?: boolean }>;
+  signup: (username: string, password: string, role: UserRole) => Promise<{ success: boolean; error?: string; needsApproval?: boolean }>;
+  checkApproval: (username: string, password: string) => Promise<{ isApproved: boolean; user?: User | null; error?: string }>;
   logout: () => void;
 }
 
@@ -44,26 +46,109 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [authState, isLoading]);
 
-  const login = (username: string, password: string, role: UserRole): boolean => {
-    // UI-only mock authentication
-    // In production, this would validate against a backend
-    if (username && password) {
-      const mockUser: User = {
-        id: role === 'admin' ? '1' : '2',
-        name: role === 'admin' ? 'Admin User' : 'Sarah Johnson',
-        email: username.includes('@') ? username : `${username}@clubem.com`,
-        role: role,
-        status: 'active',
-        createdAt: new Date().toISOString().split('T')[0],
-      };
+  const login = async (username: string, password: string, role: UserRole): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        return { success: false, error: error.error || 'Login failed' };
+      }
+
+      const data = await response.json();
+      
+      // Verify the role matches (optional check, or you can remove role from login)
+      if (data.user.role !== role) {
+        return { success: false, error: 'Role mismatch' };
+      }
 
       setAuthState({
-        user: mockUser,
+        user: data.user,
         isAuthenticated: true,
       });
-      return true;
+      return { success: true };
+    } catch (error) {
+      console.error('Login error:', error);
+      return { success: false, error: 'Network error. Please try again.' };
     }
-    return false;
+  };
+
+  const signup = async (username: string, password: string, role: UserRole): Promise<{ success: boolean; error?: string; needsApproval?: boolean }> => {
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password, role }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        return { success: false, error: error.error || 'Signup failed' };
+      }
+
+      const data = await response.json();
+
+      // If user needs approval, don't set them as authenticated
+      if (data.needsApproval) {
+        return { 
+          success: true, 
+          needsApproval: true 
+        };
+      }
+
+      // If approved, set as authenticated
+      setAuthState({
+        user: data.user,
+        isAuthenticated: true,
+      });
+      return { success: true, needsApproval: false };
+    } catch (error) {
+      console.error('Signup error:', error);
+      return { success: false, error: 'Network error. Please try again.' };
+    }
+  };
+
+  const checkApproval = async (username: string, password: string): Promise<{ isApproved: boolean; user?: User | null; error?: string }> => {
+    try {
+      const response = await fetch('/api/auth/check-approval', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        return { isApproved: false, error: error.error || 'Failed to check approval status' };
+      }
+
+      const data = await response.json();
+
+      // If approved, set as authenticated
+      if (data.isApproved && data.user) {
+        setAuthState({
+          user: data.user,
+          isAuthenticated: true,
+        });
+      }
+
+      return { 
+        isApproved: data.isApproved, 
+        user: data.user || null 
+      };
+    } catch (error) {
+      console.error('Check approval error:', error);
+      return { isApproved: false, error: 'Network error. Please try again.' };
+    }
   };
 
   const logout = () => {
@@ -86,6 +171,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         ...authState,
         login,
+        signup,
+        checkApproval,
         logout,
       }}
     >

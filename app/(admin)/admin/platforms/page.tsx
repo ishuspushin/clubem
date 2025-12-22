@@ -1,31 +1,59 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@/app/components/layout/PageContainer';
 import { Table, TableCard } from '@/app/components/ui/Table';
 import { Badge, getStatusBadgeVariant } from '@/app/components/ui/Badge';
 import { Button } from '@/app/components/ui/Button';
 import { Input } from '@/app/components/ui/Input';
-import { Modal } from '@/app/components/ui/Modal';
-import { mockPlatforms } from '@/app/data/mock';
+import { Modal, ConfirmDialog } from '@/app/components/ui/Modal';
 import { Platform } from '@/app/types';
 import { PlusIcon, EditIcon, TrashIcon } from '@/app/components/icons';
-
-interface PlatformFormData {
-  name: string;
-  status: 'active' | 'disabled';
-}
+import { useAuth } from '@/app/context/AuthContext';
+import { useToast } from '@/app/components/ui/Toast';
 
 export default function PlatformsPage() {
-  const [platforms, setPlatforms] = useState<Platform[]>(mockPlatforms);
+  const { user } = useAuth();
+  const toast = useToast();
+  const [platforms, setPlatforms] = useState<Platform[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [platformToDelete, setPlatformToDelete] = useState<Platform | null>(null);
   const [editingPlatform, setEditingPlatform] = useState<Platform | null>(null);
-  const [formData, setFormData] = useState<PlatformFormData>({
+  const [formData, setFormData] = useState({
     name: '',
-    status: 'active',
+    status: 'active' as 'active' | 'disabled',
   });
+  const [error, setError] = useState('');
+
+  // Fetch platforms from API
+  useEffect(() => {
+    fetchPlatforms();
+  }, []);
+
+  const fetchPlatforms = async () => {
+    try {
+      setIsLoading(true);
+      if (!user?.id) {
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await fetch(`/api/platforms?userId=${user.id}`);
+      if (!response.ok) throw new Error('Failed to fetch platforms');
+      const data = await response.json();
+      setPlatforms(data.platforms);
+    } catch (error) {
+      console.error('Error fetching platforms:', error);
+      toast.error('Failed to load platforms');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleOpenModal = (platform?: Platform) => {
+    setError('');
     if (platform) {
       setEditingPlatform(platform);
       setFormData({
@@ -42,44 +70,127 @@ export default function PlatformsPage() {
     setIsModalOpen(true);
   };
 
-  const handleSave = () => {
-    const today = new Date().toISOString().split('T')[0];
-    
-    if (editingPlatform) {
-      setPlatforms(prev =>
-        prev.map(p =>
-          p.id === editingPlatform.id
-            ? { ...p, name: formData.name, status: formData.status, lastUpdated: today }
-            : p
-        )
-      );
-    } else {
-      const newPlatform: Platform = {
-        id: String(Date.now()),
-        name: formData.name,
-        status: formData.status,
-        lastUpdated: today,
-      };
-      setPlatforms(prev => [...prev, newPlatform]);
+  const handleSave = async () => {
+    setError('');
+
+    if (!formData.name.trim()) {
+      setError('Platform name is required');
+      return;
     }
-    setIsModalOpen(false);
+
+    if (!user?.id) {
+      setError('User not authenticated');
+      return;
+    }
+
+    try {
+      if (editingPlatform) {
+        // Update platform
+        const response = await fetch(`/api/platforms/${editingPlatform.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name,
+            status: formData.status,
+            userId: user.id,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          setError(errorData.error || 'Failed to update platform');
+          return;
+        }
+
+        toast.success('Platform updated successfully');
+      } else {
+        // Create platform
+        const response = await fetch('/api/platforms', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name,
+            status: formData.status,
+            userId: user.id,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          setError(errorData.error || 'Failed to create platform');
+          return;
+        }
+
+        toast.success('Platform created successfully');
+      }
+
+      await fetchPlatforms();
+      setIsModalOpen(false);
+      setFormData({ name: '', status: 'active' });
+    } catch (error) {
+      console.error('Error saving platform:', error);
+      setError('An error occurred');
+    }
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this platform?')) {
-      setPlatforms(prev => prev.filter(p => p.id !== id));
+  const handleDeleteClick = (platform: Platform) => {
+    setPlatformToDelete(platform);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!platformToDelete || !user?.id) return;
+
+    try {
+      const response = await fetch(`/api/platforms/${platformToDelete.id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to delete platform');
+        return;
+      }
+
+      toast.success('Platform deleted successfully');
+      await fetchPlatforms();
+      setIsDeleteConfirmOpen(false);
+      setPlatformToDelete(null);
+    } catch (error) {
+      console.error('Error deleting platform:', error);
+      toast.error('An error occurred while deleting the platform');
     }
   };
 
-  const toggleStatus = (id: string) => {
-    const today = new Date().toISOString().split('T')[0];
-    setPlatforms(prev =>
-      prev.map(p =>
-        p.id === id 
-          ? { ...p, status: (p.status === 'active' ? 'disabled' : 'active') as 'active' | 'disabled', lastUpdated: today } 
-          : p
-      )
-    );
+  const toggleStatus = async (platform: Platform) => {
+    if (!user?.id) return;
+
+    const newStatus = platform.status === 'active' ? 'disabled' : 'active';
+
+    try {
+      const response = await fetch(`/api/platforms/${platform.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: newStatus,
+          userId: user.id,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to update platform status');
+        return;
+      }
+
+      toast.success(`Platform ${newStatus === 'active' ? 'enabled' : 'disabled'} successfully`);
+      await fetchPlatforms();
+    } catch (error) {
+      console.error('Error updating platform status:', error);
+      toast.error('An error occurred while updating platform status');
+    }
   };
 
   const columns = [
@@ -121,16 +232,17 @@ export default function PlatformsPage() {
           <Button
             variant="secondary"
             size="sm"
-            onClick={() => toggleStatus(platform.id)}
+            onClick={() => toggleStatus(platform)}
           >
             {platform.status === 'active' ? 'Disable' : 'Enable'}
           </Button>
           <Button
-            variant="ghost"
+            variant="danger"
             size="sm"
-            onClick={() => handleDelete(platform.id)}
+            onClick={() => handleDeleteClick(platform)}
+            title="Delete Platform"
           >
-            <TrashIcon className="w-4 h-4 text-red-500" />
+            <TrashIcon className="w-4 h-4" />
           </Button>
         </div>
       ),
@@ -151,30 +263,45 @@ export default function PlatformsPage() {
       }
     >
       <TableCard>
-        <Table
-          columns={columns}
-          data={platforms}
-          keyExtractor={(platform) => platform.id}
-          emptyMessage="No platforms configured"
-        />
+        {isLoading ? (
+          <div className="p-8 text-center text-slate-600">Loading platforms...</div>
+        ) : (
+          <Table
+            columns={columns}
+            data={platforms}
+            keyExtractor={(platform) => platform.id}
+            emptyMessage="No platforms configured"
+          />
+        )}
       </TableCard>
 
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setError('');
+        }}
         title={editingPlatform ? 'Edit Platform' : 'Add Platform'}
         footer={
           <>
-            <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
+            <Button variant="secondary" onClick={() => {
+              setIsModalOpen(false);
+              setError('');
+            }}>
               Cancel
             </Button>
-            <Button onClick={handleSave} disabled={!formData.name}>
+            <Button onClick={handleSave} disabled={!formData.name.trim()}>
               {editingPlatform ? 'Save Changes' : 'Add Platform'}
             </Button>
           </>
         }
       >
         <div className="space-y-4">
+          {error && (
+            <div className="p-3 rounded-md bg-red-50 border border-red-200">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
           <Input
             label="Platform Name"
             value={formData.name}
@@ -198,6 +325,20 @@ export default function PlatformsPage() {
           </div>
         </div>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={isDeleteConfirmOpen}
+        onClose={() => {
+          setIsDeleteConfirmOpen(false);
+          setPlatformToDelete(null);
+        }}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Platform"
+        message={`Are you sure you want to delete platform "${platformToDelete?.name}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+      />
     </PageContainer>
   );
 }

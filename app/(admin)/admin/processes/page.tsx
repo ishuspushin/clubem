@@ -12,18 +12,11 @@ import { mockProcessConfigs } from '@/app/data/mock';
 import { ProcessConfig } from '@/app/types';
 import { PlusIcon, EditIcon, TrashIcon } from '@/app/components/icons';
 
-interface ProcessFormData {
-  name: string;
-  description: string;
-  steps: string;
-  isActive: boolean;
-}
-
 export default function ProcessesPage() {
   const [processes, setProcesses] = useState<ProcessConfig[]>(mockProcessConfigs);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProcess, setEditingProcess] = useState<ProcessConfig | null>(null);
-  const [formData, setFormData] = useState<ProcessFormData>({
+  const [formData, setFormData] = useState({
     name: '',
     description: '',
     steps: '',

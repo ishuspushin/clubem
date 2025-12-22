@@ -13,20 +13,11 @@ import { mockFieldConfigs } from '@/app/data/mock';
 import { FieldConfig } from '@/app/types';
 import { PlusIcon, EditIcon, TrashIcon } from '@/app/components/icons';
 
-type FieldType = 'text' | 'number' | 'date' | 'select';
-
-interface FieldFormData {
-  name: string;
-  type: FieldType;
-  required: boolean;
-  description: string;
-}
-
 export default function FieldsPage() {
   const [fields, setFields] = useState<FieldConfig[]>(mockFieldConfigs);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingField, setEditingField] = useState<FieldConfig | null>(null);
-  const [formData, setFormData] = useState<FieldFormData>({
+  const [formData, setFormData] = useState({
     name: '',
     type: 'text',
     required: false,
@@ -59,7 +50,7 @@ export default function FieldsPage() {
       setFields(prev =>
         prev.map(f =>
           f.id === editingField.id
-            ? { ...f, name: formData.name, type: formData.type, required: formData.required, description: formData.description }
+            ? { ...f, ...formData }
             : f
         )
       );
@@ -67,7 +58,7 @@ export default function FieldsPage() {
       const newField: FieldConfig = {
         id: String(Date.now()),
         name: formData.name,
-        type: formData.type,
+        type: formData.type as FieldConfig['type'],
         required: formData.required,
         description: formData.description,
       };
@@ -194,7 +185,7 @@ export default function FieldsPage() {
             label="Field Type"
             options={typeOptions}
             value={formData.type}
-            onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as FieldType }))}
+            onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))}
           />
           <div className="flex items-center gap-2">
             <input
