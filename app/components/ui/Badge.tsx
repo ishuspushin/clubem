@@ -1,10 +1,10 @@
 import React from 'react';
 
-type BadgeVariant = 
-  | 'default' 
-  | 'success' 
-  | 'warning' 
-  | 'danger' 
+type BadgeVariant =
+  | 'default'
+  | 'success'
+  | 'warning'
+  | 'danger'
   | 'info'
   | 'processing';
 
@@ -40,10 +40,12 @@ export function Badge({ children, variant = 'default', className = '' }: BadgePr
 
 // Helper function to get badge variant from status
 export function getStatusBadgeVariant(status: string): BadgeVariant {
+  const normalizedStatus = status.toLowerCase();
   const statusMap: Record<string, BadgeVariant> = {
     // Order statuses
     processing: 'processing',
     needs_review: 'warning',
+    needs_manual_review: 'warning',
     ready_to_send: 'info',
     sent: 'success',
     failed: 'danger',
@@ -56,7 +58,7 @@ export function getStatusBadgeVariant(status: string): BadgeVariant {
     disabled: 'default',
   };
 
-  return statusMap[status] || 'default';
+  return statusMap[normalizedStatus] || 'default';
 }
 
 // Helper to format status for display

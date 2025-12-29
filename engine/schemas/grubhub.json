@@ -1,0 +1,463 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "grubhub-platform-schema",
+  "version": "1.0.0",
+  "name": "Grubhub",
+  "description": "Schema for parsing Grubhub/Relay Team Order Invoice PDFs",
+  
+  "platform_info": {
+    "platform_id": "grubhub",
+    "business_client": "Group - Grubhub",
+    "document_types": ["cover_sheet", "order_labels"],
+    "combined_document": true
+  },
+
+  "detection": {
+    "description": "Patterns to identify this PDF as a Grubhub order",
+    "method": "pattern_match",
+    "min_matches": 2,
+    "patterns": [
+      "Team Order Invoice",
+      "admin\\.relay\\.delivery",
+      "TEAM DELIVERY",
+      "Restaurant Care is available",
+      "Confirmation Code:",
+      "\\d+\\s+customers\\s+with\\s+\\d+\\s+items"
+    ]
+  },
+
+  "document_structure": {
+    "description": "How the PDF is organized",
+    "pages": {
+      "cover_sheet": {
+        "page_range": [1, 2],
+        "contains": ["order_summary", "guest_list", "totals"]
+      },
+      "order_labels": {
+        "page_range": [3, -1],
+        "contains": ["guest_sections"],
+        "repeating": true
+      }
+    }
+  },
+
+  "extraction_rules": {
+    
+    "main_order_info": {
+      "description": "Order-level information from cover sheet",
+      "source_pages": [1, 2],
+      
+      "fields": {
+        "confirmation_code": {
+          "pattern": "Confirmation Code:\\s*(\\w+)",
+          "group": 1,
+          "type": "string",
+          "required": false
+        },
+        
+        "order_number": {
+          "pattern": "Order:\\s*(#[\\d\\s\\-—]+)",
+          "group": 1,
+          "type": "string",
+          "required": true,
+          "post_process": ["trim"]
+        },
+        
+        "order_date": {
+          "pattern": "Order placed on:\\s*(\\w+\\s+\\d{1,2},\\s*\\d{4})",
+          "group": 1,
+          "type": "date",
+          "format": "MMM DD, YYYY",
+          "required": true
+        },
+        
+        "order_time": {
+          "pattern": "Order placed on:[^,]+,\\s*\\d{4},?\\s*(\\d{1,2}:\\d{2}:\\d{2}\\s*(?:AM|PM)?)",
+          "group": 1,
+          "type": "time",
+          "required": false
+        },
+        
+        "client_name": {
+          "description": "Company name - typically second line of Deliver to section",
+          "method": "section_extract",
+          "section_start": "Deliver to:",
+          "section_end": "TEAM DELIVERY|Deliver by|QUESTIONS",
+          "line_index": 1,
+          "fallback_line_index": 0,
+          "type": "string",
+          "required": true,
+          "post_process": ["trim", "remove_if_address"]
+        },
+        
+        "contact_name": {
+          "description": "Individual contact - first line of Deliver to section",
+          "method": "section_extract",
+          "section_start": "Deliver to:",
+          "section_end": "TEAM DELIVERY|Deliver by|QUESTIONS",
+          "line_index": 0,
+          "type": "string",
+          "required": false
+        },
+        
+        "delivery_address": {
+          "description": "Full delivery address",
+          "method": "section_extract",
+          "section_start": "Deliver to:",
+          "section_end": "Deliver by|QUESTIONS|\\d+\\s+customers",
+          "skip_lines": 3,
+          "join_lines": true,
+          "exclude_patterns": ["TEAM DELIVERY", "Deliver by", "\\(\\d{3}\\)"],
+          "type": "string",
+          "required": false
+        },
+        
+        "phone": {
+          "pattern": "(\\(\\d{3}\\)\\s*\\d{3}[-\\s]?\\d{4})",
+          "group": 1,
+          "type": "string",
+          "required": false,
+          "scope": "cover_sheet"
+        },
+        
+        "delivery_datetime": {
+          "description": "When order should be delivered - may span multiple lines",
+          "method": "multi_line_pattern",
+          "start_pattern": "Deliver by",
+          "end_patterns": ["\\d+\\s+customers", "QUESTIONS", "\\(\\d{3}\\)"],
+          "type": "datetime",
+          "post_process": ["normalize_whitespace", "extract_datetime"],
+          "required": true
+        },
+        
+        "delivery_date": {
+          "description": "Extracted from delivery_datetime",
+          "pattern": "Order placed on:\\s*(\\w+\\s+\\d{1,2},\\s*\\d{4})",
+          "group": 1,
+          "type": "date"
+        },
+        
+        "delivery_time": {
+          "description": "Extracted from delivery_datetime",
+          "pattern": "(?s)Deliver by.*?(\\d{1,2}:\\d{2}\\s*(?:AM|PM))",
+          "group": 1,
+          "type": "time"
+        },
+        
+        "guest_count": {
+          "pattern": "(\\d+)\\s+customers?\\s+with\\s+(\\d+)\\s+items?",
+          "group": 1,
+          "type": "integer",
+          "required": true
+        },
+        
+        "item_count": {
+          "pattern": "(\\d+)\\s+customers?\\s+with\\s+(\\d+)\\s+items?",
+          "group": 2,
+          "type": "integer",
+          "required": false
+        },
+        
+        "delivery_type": {
+          "method": "conditional",
+          "conditions": [
+            {"pattern": "TEAM DELIVERY", "value": "Delivery"},
+            {"pattern": "PICKUP", "value": "Pickup"}
+          ],
+          "default": "Delivery",
+          "type": "string"
+        },
+        
+        "order_subtotal": {
+          "description": "Sum of all guest subtotals (calculated from individual orders)",
+          "method": "sum_field",
+          "source": "individual_orders",
+          "field": "subtotal",
+          "type": "currency"
+        },
+        
+        "delivery_fee": {
+          "pattern": "Delivery fee\\s+\\$([\\d.]+)",
+          "group": 1,
+          "type": "currency",
+          "required": false
+        },
+        
+        "total": {
+          "pattern": "TOTAL\\s+\\$([\\d,.]+)",
+          "group": 1,
+          "type": "currency",
+          "required": false,
+          "scope": "cover_sheet"
+        }
+      }
+    },
+
+    "guest_sections": {
+      "description": "How to identify and split individual guest orders",
+      "source_pages": "all",
+      
+      "section_detection": {
+        "method": "pattern_split",
+        "pattern": "([A-Z][a-zA-Z]+(?:\\s+[A-Z][a-zA-Z]*)?)\\s+(\\d+)\\s*/\\s*(\\d+)",
+        "description": "Matches 'Name X / Y' pattern where X is guest number, Y is total guests",
+        "captures": {
+          "guest_name": 1,
+          "guest_number": 2,
+          "total_guests": 3
+        }
+      },
+      
+      "section_boundaries": {
+        "start": "guest_name pattern match",
+        "end": "next guest_name pattern OR page footer OR end of page",
+        "exclude_patterns": [
+          "https://admin\\.relay\\.delivery",
+          "Team Order Invoice",
+          "^\\d+/\\d+$"
+        ]
+      },
+      
+      "validation": {
+        "must_contain": ["Qty", "Description", "Price"],
+        "or_must_contain": ["\\$\\d+\\.\\d{2}"]
+      }
+    },
+
+    "individual_orders": {
+      "description": "Extract data from each guest section",
+      "source": "guest_sections",
+      
+      "fields": {
+        "guest_name": {
+          "source": "section_header",
+          "capture_group": 1,
+          "type": "string",
+          "required": true,
+          "post_process": ["trim"]
+        },
+        
+        "guest_number": {
+          "source": "section_header",
+          "capture_group": 2,
+          "type": "integer"
+        },
+        
+        "customer_id": {
+          "pattern": "Customer:\\s*(#[\\d—\\-]+)",
+          "group": 1,
+          "type": "string",
+          "required": false
+        },
+        
+        "items": {
+          "description": "List of items in this guest's order",
+          "method": "table_extract",
+          "table_header": "Qty\\s+Description\\s+Price",
+          "table_end": "Subtotal|Customer:|$",
+          "row_pattern": "^(\\d+)\\s+(.+?)\\s+\\$([\\d.]+)$",
+          "columns": {
+            "quantity": {"group": 1, "type": "integer"},
+            "item_name": {"group": 2, "type": "string"},
+            "price": {"group": 3, "type": "currency"}
+          }
+        },
+        
+        "modifications": {
+          "description": "Lines between item and next item/subtotal that aren't skip patterns",
+          "method": "collect_until",
+          "start_after": "item_line",
+          "end_before": "next_item_line|Subtotal|Customer:|Instructions:",
+          "skip_patterns": [
+            "^\\$",
+            "^Qty",
+            "^\\d+\\s*/\\s*\\d+$",
+            "^Allen & Company$",
+            "^\\(\\d{3}\\)",
+            "^Subtotal",
+            "^Tax",
+            "^Tip",
+            "^TOTAL",
+            "^Customer:",
+            "^https://"
+          ],
+          "type": "array",
+          "item_type": "string"
+        },
+        
+        "instructions": {
+          "description": "Special instructions (comments that don't affect build)",
+          "pattern": "Instructions:\\s*(.+)",
+          "group": 1,
+          "type": "string",
+          "required": false,
+          "maps_to": "comments"
+        },
+        
+        "subtotal": {
+          "pattern": "Subtotal\\s+\\$([\\d.]+)",
+          "group": 1,
+          "type": "currency"
+        },
+        
+        "tax": {
+          "pattern": "Tax\\s+\\$([\\d.]+)",
+          "group": 1,
+          "type": "currency"
+        },
+        
+        "tip": {
+          "pattern": "Tip\\s+\\$([\\d.]+)",
+          "group": 1,
+          "type": "currency"
+        },
+        
+        "guest_total": {
+          "pattern": "TOTAL\\s+\\$([\\d.]+)",
+          "group": 1,
+          "type": "currency",
+          "scope": "guest_section"
+        }
+      },
+      
+      "output_structure": {
+        "description": "One record per ITEM, not per guest",
+        "repeat_for_each": "items",
+        "inherit_fields": ["guest_name", "customer_id"],
+        "item_fields": ["item_name", "quantity", "price", "modifications", "comments"]
+      }
+    }
+  },
+
+  "post_processing": {
+    "modifications_vs_comments": {
+      "description": "Rules to separate modifications from comments",
+      "comment_indicators": [
+        "\\bplease\\b",
+        "\\bprefer",
+        "\\ballergy",
+        "\\bnote\\b",
+        "\\bleave\\b",
+        "\\bbag\\b",
+        "\\bfront desk\\b",
+        "\\bi like\\b",
+        "\\bi want\\b",
+        "\\bdouble bag\\b"
+      ],
+      "modification_indicators": [
+        "No\\s+\\w+",
+        "Add\\s+\\w+",
+        "Extra\\s+\\w+",
+        "Half\\s+\\w+",
+        "Side\\s+of",
+        "Cut\\s+in",
+        "Toss\\s+with",
+        "\\[V\\]",
+        "\\[VG\\]",
+        "\\[GF\\]"
+      ]
+    },
+    
+    "text_cleanup": {
+      "remove_patterns": [
+        "https://admin\\.relay\\.delivery[^\\s]*",
+        "\\d+/\\d+$",
+        "Team Order Invoice"
+      ],
+      "normalize_whitespace": true,
+      "trim_all_fields": true
+    }
+  },
+
+  "output_mapping": {
+    "description": "How extracted data maps to final output schema",
+    
+    "main_order_information": {
+      "business_client": {"source": "platform_info.business_client"},
+      "client_name": {"source": "main_order_info.contact_name"},
+      "client_information": {
+        "template": "{client_name} {delivery_address}, Phone: {phone}",
+        "sources": {
+          "client_name": "main_order_info.client_name",
+          "delivery_address": "main_order_info.delivery_address",
+          "phone": "main_order_info.phone"
+        }
+      },
+      "order_subtotal": {"source": "main_order_info.order_subtotal"},
+      "requested_pick_up_time": {"source": "main_order_info.delivery_time"},
+      "requested_pick_up_date": {"source": "main_order_info.delivery_date"},
+      "number_of_guests": {"source": "main_order_info.guest_count"},
+      "delivery": {"source": "main_order_info.delivery_type"}
+    },
+    
+    "group_orders": {
+      "group_order_number": {"source": "main_order_info.order_number"},
+      "pick_time": {"source": "main_order_info.delivery_time"}
+    },
+    
+    "individual_orders": {
+      "group_order_number": {"source": "main_order_info.order_number"},
+      "guest_name": {"source": "individual_orders.guest_name"},
+      "item_name": {"source": "individual_orders.item_name"},
+      "modifications": {"source": "individual_orders.modifications", "type": "array"},
+      "comments": {"source": "individual_orders.instructions", "default": ""}
+    }
+  },
+
+  "examples": {
+    "cover_sheet_sample": {
+      "input": [
+        "Order: #81853162 — 3151834",
+        "Order placed on: Nov 10, 2025, 10:31:06 AM",
+        "Deliver to:",
+        "Candice M",
+        "Allen & Company",
+        "TEAM DELIVERY",
+        "5 E 55th St",
+        "10th floor",
+        "New York, NY 10022",
+        "(212) 339-2268",
+        "Deliver by November 10, 2025, 12:00 PM",
+        "25 customers with 28 items"
+      ],
+      "expected_output": {
+        "order_number": "#81853162 — 3151834",
+        "order_date": "Nov 10, 2025",
+        "client_name": "Allen & Company",
+        "contact_name": "Candice M",
+        "delivery_date": "November 10, 2025",
+        "delivery_time": "12:00 PM",
+        "guest_count": 25,
+        "item_count": 28,
+        "delivery_type": "Delivery"
+      }
+    },
+    
+    "guest_section_sample": {
+      "input": "Spencer S 1 / 25 Qty Description Price\n1 Classic Mediterranean Salad $14.95\nAllen & Company\nHalf Romaine / Half Greens\nLemon Honey Vinaigrette\n(212) 339-2268\nCustomer: #07043162—0111271 Subtotal $14.95",
+      "expected_output": {
+        "guest_name": "Spencer S",
+        "guest_number": 1,
+        "items": [{
+          "quantity": 1,
+          "item_name": "Classic Mediterranean Salad",
+          "price": 14.95
+        }],
+        "modifications": ["Half Romaine / Half Greens", "Lemon Honey Vinaigrette"],
+        "customer_id": "#07043162—0111271",
+        "subtotal": 14.95
+      }
+    },
+    
+    "multi_item_guest_sample": {
+      "input": "Allan G 23 / 25 Qty Description Price\n1 Protein Meal $16.95\nChicken Shawarma\nBeef Kebab\nSpanakorizo\n1 Pita $1.50\nSubtotal $18.45",
+      "expected_output": {
+        "guest_name": "Allan G",
+        "items": [
+          {"item_name": "Protein Meal", "modifications": ["Chicken Shawarma", "Beef Kebab", "Spanakorizo"]},
+          {"item_name": "Pita", "modifications": []}
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "main_order_information": {
+    "business_client": "Group - CaterCow",
+    "client_name": "",
+    "client_information": ", Contact: , Phone: ",
+    "order_subtotal": null,
+    "requested_pick_up_time": "",
+    "requested_pick_up_date": "",
+    "number_of_guests": 0,
+    "delivery": "Delivery"
+  },
+  "group_orders": [],
+  "individual_orders": [],
+  "metadata": {
+    "platform": "catercow",
+    "source_file": "data\\uploads\\79f019a8-4199-480e-860d-2d2e7eda0e1f\\CaterCowLabelsUnedited.pdf"
+  }
+}

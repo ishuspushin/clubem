@@ -1,0 +1,34 @@
+[project]
+name = "group-order-ai"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "vansh-561",email = "vanshagrawal561@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pdfplumber (>=0.11.8,<0.12.0)",
+    "openpyxl (>=3.1.5,<4.0.0)",
+    "flask (>=3.1.2,<4.0.0)"
+]
+
+[tool.poetry]
+packages = [
+    { include = "api", from = "src" },
+    { include = "domain", from = "src" },
+    { include = "export", from = "src" },
+    { include = "grouporderai", from = "src" },
+    { include = "llm", from = "src" },
+    { include = "parsing", from = "src" },
+    { include = "registry", from = "src" },
+    { include = "services", from = "src" },
+]
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^9.0.2"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

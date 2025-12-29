@@ -50,11 +50,11 @@ export type ProcessingStep =
   | 'email';
 
 export interface GuestItem {
-  id: string;
-  guestName: string;
-  itemName: string;
-  modifications: string;
+  guest_name: string;
+  item_name: string;
+  modifications: any[];
   comments: string;
+  group_order_number?: string;
 }
 
 export interface Order {
@@ -73,6 +73,24 @@ export interface Order {
   items: GuestItem[];
   uploadedBy: string;
   createdAt: string;
+  engineJobId?: string;
+  data?: {
+    main_order_information: {
+      business_client: string;
+      client_information: string;
+      client_name: string;
+      delivery: string;
+      number_of_guests: number;
+      order_subtotal: number;
+      requested_pick_up_date: string;
+      requested_pick_up_time: string;
+    };
+    individual_orders: GuestItem[];
+    metadata: {
+      platform: string;
+      source_file: string;
+    };
+  };
 }
 
 // Stats Types

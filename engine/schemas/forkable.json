@@ -1,0 +1,148 @@
+{
+  "platform_info": {
+    "platform_id": "forkable",
+    "business_client": "Group - Forkable",
+    "order_type": "individual_orders",
+    "document_types": ["cover_sheet", "order_labels", "excel_sheet"],
+    "combined_document": false
+  },
+  "detection": {
+    "method": "pattern_match",
+    "min_matches": 1,
+    "patterns": ["Forkable", "forkable"],
+    "flags": "i"
+  },
+  "extraction_rules": {
+    "main_order_info": {
+      "text_preprocessing": { "dedupe_bold": true },
+      "fields": {
+        "order_number": {
+          "method": "first_match",
+          "patterns": [
+            { "pattern": "(?:Order\\s*(?:Number|#)\\s*[:#]?\\s*)([A-Z0-9\\-]+)", "group": 1, "flags": "i", "post_process": ["trim"] },
+            { "pattern": "(?:Invoice\\s*(?:Number|#)\\s*[:#]?\\s*)([A-Z0-9\\-]+)", "group": 1, "flags": "i", "post_process": ["trim"] }
+          ]
+        },
+        "client_name": {
+          "method": "first_match",
+          "patterns": [
+            { "pattern": "(?:Company|Client)\\s*[:]\\s*([^\\n]+)", "group": 1, "flags": "i", "post_process": ["trim"] },
+            { "pattern": "(?:Ordered\\s*by)\\s*[:]\\s*([^\\n]+)", "group": 1, "flags": "i", "post_process": ["trim"] }
+          ]
+        },
+        "client_information": {
+          "method": "section_extract",
+          "section_start": "(?:Address|Delivery Address|Pickup Address)\\s*[:]",
+          "section_end": "(?:Notes|Subtotal|Total|$)",
+          "join_lines": true,
+          "post_process": ["normalize_whitespace", "trim"]
+        },
+        "requested_pick_up_date": {
+          "method": "first_match",
+          "patterns": [
+            { "pattern": "(?:Delivery|Pickup)\\s*Date\\s*[:]\\s*([^\\n]+)", "group": 1, "flags": "i", "post_process": ["trim"] },
+            { "pattern": "(?:Scheduled\\s*for)\\s*[:]\\s*([^\\n]+)", "group": 1, "flags": "i", "post_process": ["trim"] }
+          ]
+        },
+        "requested_pick_up_time": {
+          "method": "first_match",
+          "patterns": [
+            { "pattern": "(?:Delivery|Pickup)\\s*Time\\s*[:]\\s*([^\\n]+)", "group": 1, "flags": "i", "post_process": ["trim"] },
+            { "pattern": "(?:Deliver\\s*by|Ready\\s*at)\\s*[:]?\\s*([^\\n]+)", "group": 1, "flags": "i", "post_process": ["trim"] }
+          ]
+        },
+        "requested_order_time": {
+          "method": "first_match",
+          "patterns": [
+            { "pattern": "(?:Order\\s*(?:Placed|Submitted|Created)\\s*(?:At|Time)?\\s*[:])\\s*([^\\n]+)", "group": 1, "flags": "i", "post_process": ["trim"] }
+          ]
+        },
+        "order_subtotal": {
+          "method": "first_match",
+          "patterns": [
+            { "pattern": "(?:Subtotal)\\s*\\$?\\s*([\\d,]+\\.?\\d*)", "group": 1, "flags": "i", "type": "currency", "post_process": ["trim"] }
+          ]
+        },
+        "number_of_guests": {
+          "method": "first_match",
+          "patterns": [
+            { "pattern": "(?:Guests|Headcount|Eaters)\\s*[:]\\s*(\\d+)", "group": 1, "flags": "i", "type": "integer", "post_process": ["trim"] }
+          ]
+        },
+        "delivery": {
+          "method": "conditional",
+          "conditions": [
+            { "pattern": "\\bpickup\\b", "flags": "i", "value": "Pickup" },
+            { "pattern": "\\bdelivery\\b", "flags": "i", "value": "Delivery" }
+          ],
+          "default": ""
+        }
+      }
+    },
+
+    "guest_sections": {
+      "description": "Forkable labels often have one guest per block.",
+      "section_detection": {
+        "method": "pattern_split",
+        "pattern": "(?:Slip\\s*\\d+\\s*of\\s*\\d+|^\\s*([A-Z][^\\n]{1,60})\\s*$)",
+        "flags": "im",
+        "captures": { "guest_name": 1 }
+      }
+    },
+
+    "individual_orders": {
+      "source": "guest_sections",
+      "fields": {
+        "guest_name": { "source": "section_header", "capture_group": 1, "post_process": ["trim"] },
+        "items": {
+          "method": "table_extract",
+          "table_header": "(?:QTY|Qty|Quantity)\\s+",
+          "table_end": "(?:Subtotal|Total|$)",
+          "row_pattern": "^(\\d+)\\s*x?\\s+(.+?)$",
+          "columns": {
+            "quantity": { "group": 1, "type": "integer" },
+            "item_name": { "group": 2, "type": "string" }
+          }
+        },
+        "modifications": {
+          "method": "collect_all",
+          "pattern": "^[•\\-]\\s*(.+)$",
+          "flags": "m",
+          "type": "array"
+        },
+        "comments": {
+          "method": "first_match",
+          "patterns": [
+            { "pattern": "(?:SP|Special Instructions)\\s*[:]\\s*(.+)$", "group": 1, "flags": "im" }
+          ]
+        }
+      },
+      "output_structure": { "repeat_for_each": "items", "inherit_fields": ["guest_name"] }
+    }
+  },
+
+  "output_mapping": {
+    "main_order_information": {
+      "business_client": { "source": "platform_info.business_client" },
+      "client_name": { "source": "main_order_info.client_name" },
+      "client_information": { "source": "main_order_info.client_information", "default": "" },
+      "order_subtotal": { "source": "main_order_info.order_subtotal" },
+      "requested_order_time": { "source": "main_order_info.requested_order_time", "default": "" },
+      "requested_pick_up_time": { "source": "main_order_info.requested_pick_up_time" },
+      "requested_pick_up_date": { "source": "main_order_info.requested_pick_up_date" },
+      "number_of_guests": { "source": "main_order_info.number_of_guests" },
+      "delivery": { "source": "main_order_info.delivery" }
+    },
+    "group_orders": {
+      "group_order_number": { "source": "main_order_info.order_number" },
+      "pick_time": { "source": "main_order_info.requested_pick_up_time" }
+    },
+    "individual_orders": {
+      "group_order_number": { "source": "main_order_info.order_number" },
+      "guest_name": { "source": "individual_orders.guest_name" },
+      "item_name": { "source": "individual_orders.item_name" },
+      "modifications": { "source": "individual_orders.modifications", "default": [] },
+      "comments": { "source": "individual_orders.comments", "default": "" }
+    }
+  }
+}

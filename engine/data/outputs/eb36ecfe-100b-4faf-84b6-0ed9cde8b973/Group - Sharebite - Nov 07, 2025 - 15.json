@@ -1,0 +1,45 @@
+{
+  "main_order_information": {
+    "business_client": "Group - Sharebite",
+    "client_name": "Yext ",
+    "client_information": ":, Phone: 1644669319",
+    "order_subtotal": 229.05,
+    "requested_pick_up_time": "11:30AM",
+    "requested_pick_up_date": "Nov 07, 2025",
+    "number_of_guests": 15,
+    "delivery": "Pickup"
+  },
+  "group_orders": [
+    {
+      "group_order_number": "",
+      "pick_time": "11:30AM"
+    }
+  ],
+  "individual_orders": [
+    {
+      "group_order_number": "",
+      "guest_name": "Yext Yext Yext Yext Yext",
+      "item_name": "Grek Bowl 1x Crispy Chicken Wrap 1x Crispy Chicken Wrap 1x Crispy Chicken Wrap 1x Baked Falafel Salad",
+      "modifications": [],
+      "comments": "Dresing on side!"
+    },
+    {
+      "group_order_number": "",
+      "guest_name": "Yext Yext Yext Yext Yext",
+      "item_name": "Chicken Shawarma 1x Crispy Chicken Wrap 1x Stret Cart Bowl 1x Crispy Chicken Wrap 1x Chicken Shawarma",
+      "modifications": [],
+      "comments": "No tomatoes please"
+    },
+    {
+      "group_order_number": "",
+      "guest_name": "Yext Yext Yext Yext Yext",
+      "item_name": "Kebab Sliders 1x Crispy Chicken Wrap 1x Tahini - Caesar 1x Crispy Caesar 1x Bef Kebab Bowl",
+      "modifications": [],
+      "comments": ""
+    }
+  ],
+  "metadata": {
+    "platform": "sharebite",
+    "source_file": "data\\uploads\\eb36ecfe-100b-4faf-84b6-0ed9cde8b973\\SharebiteUnedited.pdf"
+  }
+}

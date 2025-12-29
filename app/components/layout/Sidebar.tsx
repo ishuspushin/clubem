@@ -29,7 +29,6 @@ const adminNavItems: NavItem[] = [
   { name: 'Processing Queue', href: '/admin/queue', icon: <QueueIcon /> },
   { name: 'Orders', href: '/admin/orders', icon: <OrdersIcon /> },
   { name: 'Fields', href: '/admin/fields', icon: <FieldsIcon /> },
-  { name: 'Processes', href: '/admin/processes', icon: <ProcessIcon /> },
   { name: 'Platforms', href: '/admin/platforms', icon: <PlatformIcon /> },
   { name: 'Users', href: '/admin/users', icon: <UsersIcon /> },
   { name: 'Manual Review', href: '/admin/review', icon: <ReviewIcon /> },

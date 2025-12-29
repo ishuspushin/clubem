@@ -100,26 +100,58 @@ export default function UploadOrdersPage() {
       return;
     }
 
+    if (!user?.id) {
+      toast.error('You must be logged in to upload');
+      return;
+    }
+
     setIsUploading(true);
 
     try {
-      // TODO: Implement actual upload API call
-      // For now, simulate upload process
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // We'll process each platform's files as separate orders or merge them?
+      // For now, the schema supports one platform per order.
+      // If multiple platforms were selected, we might need to handle that.
+      // The current UI allows multiple platforms. Let's create one order per platform for now
+      // OR just pick the first platform for the order.
+      
+      const platformIds = Object.keys(platformFiles);
+      
+      for (const pId of platformIds) {
+        const files = platformFiles[pId];
+        if (files.length === 0) continue;
+
+        const formData = new FormData();
+        formData.append('userId', user.id);
+        formData.append('platformId', pId);
+        files.forEach(file => {
+          formData.append('files', file);
+        });
+
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `Failed to upload files for platform ${pId}`);
+        }
+
+        const data = await response.json();
+        setNewOrderId(data.orderId);
+      }
 
       setIsUploading(false);
       setUploadComplete(true);
-      setNewOrderId(`ORD-${Date.now().toString().slice(-6)}`);
-      toast.success('Order created successfully');
+      toast.success('Order(s) created successfully');
 
       // Clear files but keep modal open to show success message
       setPlatformFiles({});
       setSelectedPlatform('');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload error:', error);
-      toast.error('Failed to upload files');
+      toast.error(error.message || 'Failed to upload files');
       setIsUploading(false);
-      // Don't clear files on error - user can retry
     }
   };
 

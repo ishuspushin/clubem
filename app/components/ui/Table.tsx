@@ -12,7 +12,7 @@ interface Column<T> {
 interface TableProps<T> {
   columns: Column<T>[];
   data: T[];
-  keyExtractor: (item: T) => string;
+  keyExtractor: (item: T, index: number) => string;
   emptyMessage?: string;
   onRowClick?: (item: T) => void;
   className?: string;
@@ -56,9 +56,9 @@ export function Table<T>({
               </td>
             </tr>
           ) : (
-            data.map((item) => (
+            data.map((item, index) => (
               <tr
-                key={keyExtractor(item)}
+                key={keyExtractor(item, index)}
                 onClick={() => onRowClick?.(item)}
                 className={`
                   bg-white hover:bg-slate-50 transition-colors

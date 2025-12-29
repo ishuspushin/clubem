@@ -1,33 +1,63 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@/app/components/layout/PageContainer';
 import { Card, CardHeader } from '@/app/components/ui/Card';
 import { Table, TableCard } from '@/app/components/ui/Table';
 import { Badge, getStatusBadgeVariant, formatStatus } from '@/app/components/ui/Badge';
 import { Button } from '@/app/components/ui/Button';
 import { Input } from '@/app/components/ui/Input';
-import { Select } from '@/app/components/ui/Select';
-import { mockOrders } from '@/app/data/mock';
 import { Order, GuestItem } from '@/app/types';
-import { CheckIcon, SendIcon } from '@/app/components/icons';
+import { CheckIcon, SendIcon, RefreshIcon, EyeIcon } from '@/app/components/icons';
+import { useAuth } from '@/app/context/AuthContext';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 export default function ManualReviewPage() {
-  const ordersNeedingReview = mockOrders.filter(o => o.status === 'needs_review');
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(
-    ordersNeedingReview[0] || null
-  );
-  const [editedItems, setEditedItems] = useState<GuestItem[]>(
-    selectedOrder?.items || []
-  );
+  const { user } = useAuth();
+  const router = useRouter();
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+  const [editedItems, setEditedItems] = useState<any[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleSelectOrder = (order: Order) => {
-    setSelectedOrder(order);
-    setEditedItems([...order.items]);
+  const fetchOrders = async () => {
+    if (!user?.id) return;
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/orders?userId=${user.id}`);
+      if (!response.ok) throw new Error('Failed to fetch orders');
+      const data = await response.json();
+      const needsReview = (data.orders || []).filter((o: any) =>
+        o.status === 'NEEDS_MANUAL_REVIEW'
+      );
+      setOrders(needsReview);
+      if (needsReview.length > 0 && !selectedOrder) {
+        handleSelectOrder(needsReview[0]);
+      }
+    } catch (error: any) {
+      console.error('Review fetch error:', error);
+      toast.error('Failed to load orders needing review');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleItemChange = (itemId: string, field: keyof GuestItem, value: string) => {
+  useEffect(() => {
+    fetchOrders();
+  }, [user?.id]);
+
+  const handleSelectOrder = (order: any) => {
+    setSelectedOrder(order);
+    const items = order.data?.individual_orders || [];
+    setEditedItems(items.map((item: any, index: number) => ({
+      ...item,
+      id: item.id || `temp-${index}` // Ensure unique ID for keys
+    })));
+  };
+
+  const handleItemChange = (itemId: string, field: string, value: string) => {
     setEditedItems(prev =>
       prev.map(item =>
         item.id === itemId ? { ...item, [field]: value } : item
@@ -36,41 +66,92 @@ export default function ManualReviewPage() {
   };
 
   const handleSaveCorrections = async () => {
-    setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsSaving(false);
-    alert('Corrections saved successfully!');
+    if (!selectedOrder) return;
+    try {
+      setIsSaving(true);
+      // Update the order data with edited items, ensuring modifications are handled correctly
+      const processedItems = editedItems.map(item => ({
+        ...item,
+        modifications: typeof item.modifications === 'string'
+          ? item.modifications.split(',').map((s: string) => s.trim()).filter((s: string) => s !== '')
+          : item.modifications
+      }));
+
+      const updatedData = {
+        ...selectedOrder.data,
+        individual_orders: processedItems
+      };
+
+      const response = await fetch(`/api/orders/${selectedOrder.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user?.id,
+          data: updatedData
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to save corrections');
+
+      toast.success('Corrections saved successfully');
+      fetchOrders();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to save corrections');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleApproveAndSend = async () => {
-    setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsSaving(false);
-    alert('Order approved and sent!');
+    if (!selectedOrder) return;
+    try {
+      setIsSaving(true);
+      const response = await fetch(`/api/orders/${selectedOrder.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user?.id,
+          status: 'READY_TO_SEND'
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to approve order');
+
+      toast.success('Order approved and marked as ready');
+      setSelectedOrder(null);
+      fetchOrders();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to approve order');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const orderColumns = [
     {
-      key: 'id',
-      header: 'Order',
-      render: (order: Order) => (
-        <span className="font-medium text-slate-900">{order.id}</span>
-      ),
-    },
-    {
-      key: 'businessClient',
+      key: 'client',
       header: 'Client',
+      render: (order: any) => {
+        const orderData = order.data?.main_order_information || {};
+        return (
+          <div>
+            <p className="font-medium text-slate-900">{orderData.client_name || 'Processing...'}</p>
+            <p className="text-sm text-slate-500">{orderData.business_client || order.platform?.name}</p>
+          </div>
+        );
+      },
     },
     {
-      key: 'numberOfGuests',
+      key: 'guests',
       header: 'Guests',
+      render: (order: any) => order.data?.main_order_information?.number_of_guests || '—',
     },
     {
       key: 'status',
       header: 'Status',
-      render: (order: Order) => (
-        <Badge variant={getStatusBadgeVariant(order.status)}>
-          {formatStatus(order.status)}
+      render: (order: any) => (
+        <Badge variant={getStatusBadgeVariant(order.status.toLowerCase() as any)}>
+          {formatStatus(order.status.toLowerCase() as any)}
         </Badge>
       ),
     },
@@ -80,20 +161,31 @@ export default function ManualReviewPage() {
     <PageContainer
       title="Manual Review"
       description="Review and correct orders that need human verification"
+      action={
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={fetchOrders}
+          isLoading={loading}
+          leftIcon={<RefreshIcon className="w-4 h-4" />}
+        >
+          Refresh
+        </Button>
+      }
     >
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Orders List */}
         <div className="lg:col-span-1">
           <TableCard
             title="Orders Needing Review"
-            description={`${ordersNeedingReview.length} orders`}
+            description={`${orders.length} orders`}
           >
             <Table
               columns={orderColumns}
-              data={ordersNeedingReview}
-              keyExtractor={(order) => order.id}
+              data={orders}
+              keyExtractor={(item, index) => item.id || `order-${index}`}
               onRowClick={handleSelectOrder}
-              emptyMessage="No orders need review"
+              emptyMessage={loading ? "Loading..." : "No orders need review"}
             />
           </TableCard>
         </div>
@@ -103,27 +195,37 @@ export default function ManualReviewPage() {
           {selectedOrder ? (
             <Card>
               <CardHeader
-                title={`Review Order ${selectedOrder.id}`}
-                description={`${selectedOrder.businessClient} - ${selectedOrder.requestedDate}`}
+                title={`Review Order`}
+                description={selectedOrder.data?.main_order_information?.business_client || 'Order Details'}
+                action={
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => router.push(`/admin/orders/${selectedOrder.id}`)}
+                    leftIcon={<EyeIcon className="w-4 h-4" />}
+                  >
+                    View Details
+                  </Button>
+                }
               />
 
               {/* Order Summary */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 p-4 bg-slate-50 rounded-md">
                 <div>
                   <p className="text-xs text-slate-500">Client</p>
-                  <p className="font-medium text-slate-900">{selectedOrder.clientName}</p>
+                  <p className="font-medium text-slate-900">{selectedOrder.data?.main_order_information?.client_name || '—'}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Pickup Time</p>
-                  <p className="font-medium text-slate-900">{selectedOrder.pickupTime}</p>
+                  <p className="text-xs text-slate-500">Requested Date</p>
+                  <p className="font-medium text-slate-900">{selectedOrder.data?.main_order_information?.requested_pick_up_date || '—'}</p>
                 </div>
                 <div>
                   <p className="text-xs text-slate-500">Guests</p>
-                  <p className="font-medium text-slate-900">{selectedOrder.numberOfGuests}</p>
+                  <p className="font-medium text-slate-900">{selectedOrder.data?.main_order_information?.number_of_guests || '—'}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Delivery</p>
-                  <p className="font-medium text-slate-900 capitalize">{selectedOrder.deliveryMode}</p>
+                  <p className="text-xs text-slate-500">Subtotal</p>
+                  <p className="font-medium text-slate-900">${selectedOrder.data?.main_order_information?.order_subtotal || '0.00'}</p>
                 </div>
               </div>
 
@@ -151,32 +253,36 @@ export default function ManualReviewPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {editedItems.map(item => (
-                        <tr key={item.id}>
+                      {editedItems.map((item, idx) => (
+                        <tr key={item.id || idx}>
                           <td className="px-3 py-2">
                             <Input
-                              value={item.guestName}
-                              onChange={(e) => handleItemChange(item.id, 'guestName', e.target.value)}
+                              value={item.guest_name || ''}
+                              onChange={(e) => handleItemChange(item.id, 'guest_name', e.target.value)}
                               className="text-sm"
                             />
                           </td>
                           <td className="px-3 py-2">
                             <Input
-                              value={item.itemName}
-                              onChange={(e) => handleItemChange(item.id, 'itemName', e.target.value)}
+                              value={item.item_name || ''}
+                              onChange={(e) => handleItemChange(item.id, 'item_name', e.target.value)}
                               className="text-sm"
                             />
                           </td>
                           <td className="px-3 py-2">
                             <Input
-                              value={item.modifications}
+                              value={
+                                Array.isArray(item.modifications)
+                                  ? item.modifications.join(', ')
+                                  : (item.modifications || '')
+                              }
                               onChange={(e) => handleItemChange(item.id, 'modifications', e.target.value)}
                               className="text-sm"
                             />
                           </td>
                           <td className="px-3 py-2">
                             <Input
-                              value={item.comments}
+                              value={item.comments || ''}
                               onChange={(e) => handleItemChange(item.id, 'comments', e.target.value)}
                               className="text-sm"
                             />
@@ -204,7 +310,7 @@ export default function ManualReviewPage() {
                   isLoading={isSaving}
                   leftIcon={<SendIcon className="w-4 h-4" />}
                 >
-                  Approve & Send
+                  Approve & Mark Ready
                 </Button>
               </div>
             </Card>
@@ -212,7 +318,7 @@ export default function ManualReviewPage() {
             <Card>
               <div className="text-center py-12">
                 <p className="text-slate-500">
-                  Select an order from the list to review
+                  {loading ? "Loading..." : "Select an order from the list to review"}
                 </p>
               </div>
             </Card>

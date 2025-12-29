@@ -269,7 +269,7 @@ export default function PlatformsPage() {
           <Table
             columns={columns}
             data={platforms}
-            keyExtractor={(platform) => platform.id}
+            keyExtractor={(platform, index) => platform.id || `platform-${index}`}
             emptyMessage="No platforms configured"
           />
         )}

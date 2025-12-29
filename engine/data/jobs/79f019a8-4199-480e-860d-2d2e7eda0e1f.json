@@ -1,0 +1,334 @@
+{
+  "job_id": "79f019a8-4199-480e-860d-2d2e7eda0e1f",
+  "status": "completed",
+  "created_at": 1766941691,
+  "updated_at": 1766941699,
+  "payload": {
+    "type": "parse",
+    "file_count": 3
+  },
+  "result": {
+    "files": [
+      {
+        "pdf_path": "data\\uploads\\79f019a8-4199-480e-860d-2d2e7eda0e1f\\CaterCowCoversheetUnedited.pdf",
+        "platform_id": "catercow",
+        "output_json_path": "data\\outputs\\79f019a8-4199-480e-860d-2d2e7eda0e1f\\Group - CaterCow - November 6, 2025 - 31.json",
+        "output": {
+          "main_order_information": {
+            "business_client": "Group - CaterCow",
+            "client_name": "CompStak",
+            "client_information": "Delivery Time 11:45AM - 12:15PM 675 6th Avenue Company CompStak, Contact: Alyssa, Phone: 646-459-7030",
+            "order_subtotal": null,
+            "requested_pick_up_time": "11:45AM - 12:15PM",
+            "requested_pick_up_date": "November 6, 2025",
+            "number_of_guests": 31,
+            "delivery": "Delivery"
+          },
+          "group_orders": [
+            {
+              "group_order_number": "277652",
+              "pick_time": "11:45AM - 12:15PM"
+            }
+          ],
+          "individual_orders": [
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Baked Falafel Bowl: Herbed oven-baked falafel, farro (wheat grain), garlic cauliflower, farro citrus salad, aleppo chickpeas,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Beef Kebab Bowl: Beef kebab served over jasmine rice, iceberg/romaine, toasted almonds, tzatziki, spicy tomatoes,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 2",
+              "item_name": "Beef Kebab Bowl: Beef kebab served over jasmine rice, iceberg/romaine, toasted almonds, tzatziki, spicy tomatoes,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Chicken Shawarma Bowl: Mediterranean-spiced chicken thigh over farro (wheat grain), mixed greens with roasted beets,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 2",
+              "item_name": "Chicken Shawarma Bowl: Mediterranean-spiced chicken thigh over farro (wheat grain), mixed greens with roasted beets,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 3",
+              "item_name": "Chicken Shawarma Bowl: Mediterranean-spiced chicken thigh over farro (wheat grain), mixed greens with roasted beets,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Greek Chicken Bowl: Sliced chicken breast over spanakorizo (mediterranean herbed rice), crispy leaf blend, spicy tomato",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 2",
+              "item_name": "Greek Chicken Bowl: Sliced chicken breast over spanakorizo (mediterranean herbed rice), crispy leaf blend, spicy tomato",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Greek Chicken Kebab Bowl: Greek chicken kebab over farro with garlic roasted cauliflower, tzatziki, beets, zucchini,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Mediterranean Crispy Chicken Bowl: Mediterranean crispy chicken over spanakorizo (herbed rice) and quinoa, with",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 2",
+              "item_name": "Mediterranean Crispy Chicken Bowl: Mediterranean crispy chicken over spanakorizo (herbed rice) and quinoa, with",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Street Cart Bowl: Terra's take on street cart shawarma bowl. We elevate this plate with our chicken shawarma, jasmine rice,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 2",
+              "item_name": "Street Cart Bowl: Terra's take on street cart shawarma bowl. We elevate this plate with our chicken shawarma, jasmine rice,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Za'atar Glazed Salmon Bowl: Za'atar honey-cider glazed salmon, served over spanakorizo (spinach rice), with cauliflower,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 2",
+              "item_name": "Za'atar Glazed Salmon Bowl: Za'atar honey-cider glazed salmon, served over spanakorizo (spinach rice), with cauliflower,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Baked Falafel Salad: Mixed leafy greens, baby kale, baked falafel, quinoa, silan roasted peppers, sumac onions, farmland",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Chicken Harvest Salad: Crispy leaf blend, baby kale, grilled chicken, honey harissa carrots, beets, baby zucchini,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Chicken Shawarma Salad: Mixed leafy greens baby kale, farro, shawarma chicken, spicy tomatoes, silan roasted peppers,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Crispy Caesar Salad: Crispy leaf blend, baby kale, with our special buttermilk-brined chicken coated in thin strips of",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 2",
+              "item_name": "Crispy Caesar Salad: Crispy leaf blend, baby kale, with our special buttermilk-brined chicken coated in thin strips of",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Beef Kebab Wrap: Beef kebab, cilantro chimmichurri, romaine blend, spicy tomatoes, sumac onions, silan roasted peppers,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 2",
+              "item_name": "Beef Kebab Wrap: Beef kebab, cilantro chimmichurri, romaine blend, spicy tomatoes, sumac onions, silan roasted peppers,",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Classic Shawarma Wrap: A classic comfort chicken shawarma wrap with aleppo chickpeas, cucumber, sumac onions and",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Crispy Chicken Wrap: Mediterranean crispy chicken, classic terra chips, greek yogurt slaw, and schug aioli (spicy herb",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 2",
+              "item_name": "Crispy Chicken Wrap: Mediterranean crispy chicken, classic terra chips, greek yogurt slaw, and schug aioli (spicy herb",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 3",
+              "item_name": "Crispy Chicken Wrap: Mediterranean crispy chicken, classic terra chips, greek yogurt slaw, and schug aioli (spicy herb",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 4",
+              "item_name": "Crispy Chicken Wrap: Mediterranean crispy chicken, classic terra chips, greek yogurt slaw, and schug aioli (spicy herb",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Crispy Harissa Chicken Wrap: Our take on a mediterranean buffalo chicken wrap, crispy chicken, silan peppers, persian",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 2",
+              "item_name": "Crispy Harissa Chicken Wrap: Our take on a mediterranean buffalo chicken wrap, crispy chicken, silan peppers, persian",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Roasted Cauliflower Wrap: Garlic roasted cauliflower, spanakorizo, crispy onions, aleppo chickpeas, cumin house spice",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "277652",
+              "guest_name": "Guest 1",
+              "item_name": "Tahini Caesar Wrap: Crispy leaf blend, chicken breast, parmesan, ja'ala nut mix, tahini yogurt and caesar dressing",
+              "modifications": [],
+              "comments": ""
+            }
+          ],
+          "metadata": {
+            "platform": "catercow",
+            "source_file": "data\\uploads\\79f019a8-4199-480e-860d-2d2e7eda0e1f\\CaterCowCoversheetUnedited.pdf"
+          }
+        }
+      },
+      {
+        "pdf_path": "data\\uploads\\79f019a8-4199-480e-860d-2d2e7eda0e1f\\CaterCowLabelsUnedited.pdf",
+        "platform_id": "catercow",
+        "output_json_path": "data\\outputs\\79f019a8-4199-480e-860d-2d2e7eda0e1f\\Group - CaterCow -  - 0.json",
+        "output": {
+          "main_order_information": {
+            "business_client": "Group - CaterCow",
+            "client_name": "",
+            "client_information": ", Contact: , Phone: ",
+            "order_subtotal": null,
+            "requested_pick_up_time": "",
+            "requested_pick_up_date": "",
+            "number_of_guests": 0,
+            "delivery": "Delivery"
+          },
+          "group_orders": [],
+          "individual_orders": [],
+          "metadata": {
+            "platform": "catercow",
+            "source_file": "data\\uploads\\79f019a8-4199-480e-860d-2d2e7eda0e1f\\CaterCowLabelsUnedited.pdf"
+          }
+        }
+      },
+      {
+        "pdf_path": "data\\uploads\\79f019a8-4199-480e-860d-2d2e7eda0e1f\\SharebiteUnedited.pdf",
+        "platform_id": "sharebite",
+        "output_json_path": "data\\outputs\\79f019a8-4199-480e-860d-2d2e7eda0e1f\\Group - Sharebite - Nov 07, 2025 - 15.json",
+        "output": {
+          "main_order_information": {
+            "business_client": "Group - Sharebite",
+            "client_name": "Yext ",
+            "client_information": ":, Phone: 1644669319",
+            "order_subtotal": 229.05,
+            "requested_pick_up_time": "11:30AM",
+            "requested_pick_up_date": "Nov 07, 2025",
+            "number_of_guests": 15,
+            "delivery": "Pickup"
+          },
+          "group_orders": [
+            {
+              "group_order_number": "",
+              "pick_time": "11:30AM"
+            }
+          ],
+          "individual_orders": [
+            {
+              "group_order_number": "",
+              "guest_name": "Yext Yext Yext Yext Yext",
+              "item_name": "Grek Bowl 1x Crispy Chicken Wrap 1x Crispy Chicken Wrap 1x Crispy Chicken Wrap 1x Baked Falafel Salad",
+              "modifications": [],
+              "comments": "Dresing on side!"
+            },
+            {
+              "group_order_number": "",
+              "guest_name": "Yext Yext Yext Yext Yext",
+              "item_name": "Chicken Shawarma 1x Crispy Chicken Wrap 1x Stret Cart Bowl 1x Crispy Chicken Wrap 1x Chicken Shawarma",
+              "modifications": [],
+              "comments": "No tomatoes please"
+            },
+            {
+              "group_order_number": "",
+              "guest_name": "Yext Yext Yext Yext Yext",
+              "item_name": "Kebab Sliders 1x Crispy Chicken Wrap 1x Tahini - Caesar 1x Crispy Caesar 1x Bef Kebab Bowl",
+              "modifications": [],
+              "comments": ""
+            }
+          ],
+          "metadata": {
+            "platform": "sharebite",
+            "source_file": "data\\uploads\\79f019a8-4199-480e-860d-2d2e7eda0e1f\\SharebiteUnedited.pdf"
+          }
+        }
+      }
+    ]
+  },
+  "error": null
+}

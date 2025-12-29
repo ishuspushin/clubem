@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@/app/components/layout/PageContainer';
 import { Table, TableCard } from '@/app/components/ui/Table';
 import { Badge, getStatusBadgeVariant, formatStatus } from '@/app/components/ui/Badge';
 import { Button } from '@/app/components/ui/Button';
-import { mockOrders } from '@/app/data/mock';
 import { Order, ProcessingStep } from '@/app/types';
 import { RefreshIcon } from '@/app/components/icons';
+import { useAuth } from '@/app/context/AuthContext';
+import { toast } from 'react-hot-toast';
 
 const stepLabels: Record<ProcessingStep, string> = {
   ocr: 'OCR',
@@ -17,51 +18,88 @@ const stepLabels: Record<ProcessingStep, string> = {
 };
 
 export default function ProcessingQueuePage() {
-  const [orders, setOrders] = useState(mockOrders.filter(o => 
-    o.status === 'processing' || o.status === 'failed'
-  ));
+  const { user } = useAuth();
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleRetry = (orderId: string) => {
-    setOrders(prev => 
-      prev.map(order => 
-        order.id === orderId 
-          ? { ...order, status: 'processing' as const, currentStep: 'ocr' as const }
-          : order
-      )
-    );
+  const fetchQueue = async () => {
+    if (!user?.id) return;
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/orders?userId=${user.id}`);
+      if (!response.ok) throw new Error('Failed to fetch queue');
+      const data = await response.json();
+      // Filter for processing or failed
+      const queueOrders = (data.orders || []).filter((o: any) =>
+        o.status === 'PROCESSING' || o.status === 'FAILED'
+      );
+      setOrders(queueOrders);
+    } catch (error: any) {
+      console.error('Queue fetch error:', error);
+      toast.error('Failed to load processing queue');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchQueue();
+  }, [user?.id]);
+
+  const handleRetry = async (orderId: string) => {
+    try {
+      const response = await fetch(`/api/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user?.id,
+          status: 'PROCESSING'
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to retry order');
+
+      toast.success('Order retry initiated');
+      fetchQueue();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to retry order');
+    }
   };
 
   const columns = [
     {
-      key: 'id',
-      header: 'Order ID',
-      render: (order: Order) => (
-        <span className="font-medium text-slate-900">{order.id}</span>
-      ),
-    },
-    {
-      key: 'businessClient',
-      header: 'Business Client',
+      key: 'client',
+      header: 'Client',
+      render: (order: any) => {
+        const orderData = order.data?.main_order_information || {};
+        return (
+          <div>
+            <p className="font-medium text-slate-900">{orderData.client_name || 'Processing...'}</p>
+            <p className="text-sm text-slate-500">{orderData.business_client || order.platform?.name}</p>
+          </div>
+        );
+      },
     },
     {
       key: 'groupOrderNumber',
       header: 'Group Order #',
-      render: (order: Order) => (
-        <span className="text-slate-600 font-mono text-sm">{order.groupOrderNumber}</span>
+      render: (order: any) => (
+        <span className="text-slate-600 font-mono text-sm">{order.groupOrderNumber || '—'}</span>
       ),
     },
     {
       key: 'currentStep',
       header: 'Current Step',
-      render: (order: Order) => (
+      render: (order: any) => (
         <div className="flex items-center gap-2">
           <div className="flex gap-1">
             {(['ocr', 'extraction', 'formatting', 'email'] as ProcessingStep[]).map((step, idx) => {
-              const stepIndex = ['ocr', 'extraction', 'formatting', 'email'].indexOf(order.currentStep);
+              const steps: ProcessingStep[] = ['ocr', 'extraction', 'formatting', 'email'];
+              const stepIndex = steps.indexOf(order.currentStep || 'ocr');
               const currentStepIndex = idx;
               const isCompleted = currentStepIndex < stepIndex;
               const isCurrent = currentStepIndex === stepIndex;
-              
+
               return (
                 <div
                   key={step}
@@ -74,24 +112,24 @@ export default function ProcessingQueuePage() {
               );
             })}
           </div>
-          <span className="text-sm text-slate-600">{stepLabels[order.currentStep]}</span>
+          <span className="text-sm text-slate-600">{stepLabels[order.currentStep as ProcessingStep] || 'Initializing...'}</span>
         </div>
       ),
     },
     {
       key: 'status',
       header: 'Status',
-      render: (order: Order) => (
-        <Badge variant={getStatusBadgeVariant(order.status)}>
-          {formatStatus(order.status)}
+      render: (order: any) => (
+        <Badge variant={getStatusBadgeVariant(order.status.toLowerCase() as any)}>
+          {formatStatus(order.status.toLowerCase() as any)}
         </Badge>
       ),
     },
     {
       key: 'actions',
       header: '',
-      render: (order: Order) => (
-        order.status === 'failed' && (
+      render: (order: any) => (
+        order.status === 'FAILED' && (
           <Button
             variant="secondary"
             size="sm"
@@ -109,6 +147,17 @@ export default function ProcessingQueuePage() {
     <PageContainer
       title="Processing Queue"
       description="Monitor and manage orders in the processing pipeline"
+      action={
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={fetchQueue}
+          isLoading={loading}
+          leftIcon={<RefreshIcon className="w-4 h-4" />}
+        >
+          Refresh
+        </Button>
+      }
     >
       {/* Processing Steps Legend */}
       <div className="mb-6 p-4 bg-white rounded-md border border-slate-200">
@@ -132,8 +181,8 @@ export default function ProcessingQueuePage() {
         <Table
           columns={columns}
           data={orders}
-          keyExtractor={(order) => order.id}
-          emptyMessage="No orders currently in queue"
+          keyExtractor={(item, index) => item.id || `order-${index}`}
+          emptyMessage={loading ? "Loading queue..." : "No orders currently in queue"}
         />
       </TableCard>
     </PageContainer>

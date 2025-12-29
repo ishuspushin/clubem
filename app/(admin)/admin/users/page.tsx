@@ -350,7 +350,7 @@ export default function UsersPage() {
           <Table
             columns={columns}
             data={users}
-            keyExtractor={(user) => user.id}
+            keyExtractor={(item, index) => item.id || `user-${index}`}
             emptyMessage="No users found"
           />
         )}

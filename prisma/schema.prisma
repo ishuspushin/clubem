@@ -13,27 +13,118 @@ enum UserRole {
   STAFF
 }
 
+enum Status {
+  ACTIVE
+  DISABLED
+}
+
+enum OrderStatus {
+  PROCESSING
+  NEEDS_MANUAL_REVIEW
+  READY_TO_SEND
+  SENT
+  FAILED
+}
+
+enum FieldLevel {
+  ORDER
+  GUEST
+}
+
 model User {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   username   String   @unique
   password   String
   role       UserRole
   isApproved Boolean  @default(false)
+  orders     Order[]  @relation("UserOrders")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
 
-enum PlatformStatus {
-  ACTIVE
-  DISABLED
+  // Google Integration
+  googleAccessToken  String?
+  googleRefreshToken String?
+  googleTokenExpiry  DateTime?
 }
 
 model Platform {
-  id     String         @id @default(auto()) @map("_id") @db.ObjectId
-  name   String         @unique
-  status PlatformStatus @default(ACTIVE)
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  name   String @unique
+  status Status @default(ACTIVE)
+
+  fields Fields[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  orders Order[]
+}
+
+model Order {
+  id               String      @id @default(auto()) @map("_id") @db.ObjectId
+  status           OrderStatus
+  groupOrderNumber String
+  data             Json
+  engineJobId      String?
+
+  manuallyEdited Boolean @default(false)
+  reviewedById   String? @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  platformId String   @db.ObjectId
+  platform   Platform @relation(fields: [platformId], references: [id])
+
+  createdById String @db.ObjectId
+  createdBy   User   @relation("UserOrders", fields: [createdById], references: [id])
+}
+
+enum ValueType {
+  TEXT
+  NUMBER
+  TIME
+  DATE
+  ARRAY
+}
+
+enum FieldRenderType {
+  KEY_VALUE
+  REPEATED_BLOCK
+}
+
+model Section {
+  id         String          @id @default(auto()) @map("_id") @db.ObjectId
+  rank       Int             @default(0)
+  name       String
+  level      FieldLevel      @default(ORDER)
+  renderType FieldRenderType @default(KEY_VALUE)
+
+  fields Fields[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Fields {
+  id     String     @id @default(auto()) @map("_id") @db.ObjectId
+  rank   Int        @default(0)
+  name   String
+  level  FieldLevel @default(ORDER)
+  value  ValueType  @default(TEXT)
+  status Status     @default(ACTIVE)
+  key    String
+
+  expandArray Boolean @default(false)
+  maxColumns  Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  section   Section? @relation(fields: [sectionId], references: [id])
+  sectionId String?  @db.ObjectId
+
+  platform   Platform? @relation(fields: [platformId], references: [id])
+  platformId String?   @db.ObjectId
 }

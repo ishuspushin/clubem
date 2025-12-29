@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/src/utils/prisma';
 import { getAuthenticatedUserFromId, requireAdmin, unauthorizedResponse, forbiddenResponse } from '@/app/api/auth/helpers';
-import { PlatformStatus } from '@prisma/client';
+import { Status } from '@prisma/client';
 
 // GET all platforms (all authenticated users can read)
 export async function GET(request: NextRequest) {
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     const mappedPlatforms = platforms.map(platform => ({
       id: platform.id,
       name: platform.name,
-      status: platform.status === PlatformStatus.ACTIVE ? 'active' as const : 'disabled' as const,
+      status: platform.status === Status.ACTIVE ? 'active' as const : 'disabled' as const,
       lastUpdated: platform.updatedAt.toISOString().split('T')[0],
     }));
 
@@ -70,8 +70,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate status
-    const validStatus = status === 'active' ? PlatformStatus.ACTIVE : PlatformStatus.DISABLED;
-
+    const validStatus = status === 'active' ? Status.ACTIVE : Status.DISABLED;
+    
     // Check if platform already exists
     const existingPlatform = await prisma.platform.findUnique({
       where: { name },
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
       platform: {
         id: platform.id,
         name: platform.name,
-        status: platform.status === PlatformStatus.ACTIVE ? 'active' as const : 'disabled' as const,
+        status: platform.status === Status.ACTIVE ? 'active' as const : 'disabled' as const,
         lastUpdated: platform.updatedAt.toISOString().split('T')[0],
       },
     }, { status: 201 });

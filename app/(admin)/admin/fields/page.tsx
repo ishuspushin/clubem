@@ -154,7 +154,7 @@ export default function FieldsPage() {
         <Table
           columns={columns}
           data={fields}
-          keyExtractor={(field) => field.id}
+          keyExtractor={(item, index) => item.id || `field-${index}`}
           emptyMessage="No fields configured"
         />
       </TableCard>

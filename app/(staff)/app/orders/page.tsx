@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { PageContainer } from '@/app/components/layout/PageContainer';
 import { Table, TableCard } from '@/app/components/ui/Table';
@@ -8,31 +8,60 @@ import { Badge, getStatusBadgeVariant, formatStatus } from '@/app/components/ui/
 import { Button } from '@/app/components/ui/Button';
 import { Input } from '@/app/components/ui/Input';
 import { Select } from '@/app/components/ui/Select';
-import { mockOrders } from '@/app/data/mock';
-import { Order } from '@/app/types';
 import { useAuth } from '@/app/context/AuthContext';
-import { EyeIcon, DownloadIcon } from '@/app/components/icons';
+import { EyeIcon, DownloadIcon, RefreshIcon } from '@/app/components/icons';
+import { toast } from 'react-hot-toast';
 
 export default function StaffOrdersPage() {
   const router = useRouter();
   const { user } = useAuth();
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  // Filter orders to only show current user's orders
-  // In real app, this would be filtered by backend
-  const userOrders = mockOrders.filter(order => 
-    order.uploadedBy === user?.name || order.uploadedBy === 'Sarah Johnson'
-  );
+  const fetchOrders = useCallback(async (showLoading = true) => {
+    if (showLoading) setLoading(true);
+    else setIsRefreshing(true);
 
-  const filteredOrders = userOrders.filter(order => {
-    const matchesSearch = 
-      order.businessClient.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.id.toLowerCase().includes(searchQuery.toLowerCase());
-    
+    try {
+      const response = await fetch(`/api/orders?userId=${user?.id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch orders');
+      }
+      const data = await response.json();
+      setOrders(data.orders || []);
+    } catch (error: any) {
+      console.error('Fetch orders error:', error);
+      toast.error(error.message || 'Failed to load orders');
+    } finally {
+      setLoading(false);
+      setIsRefreshing(false);
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchOrders();
+    }
+  }, [user?.id, fetchOrders]);
+
+  const filteredOrders = orders.filter(order => {
+    const orderData = order.data?.main_order_information || {};
+    const clientName = orderData.client_name || '';
+    const businessClient = orderData.business_client || '';
+    const orderId = order.id || '';
+    const groupOrderNumber = order.groupOrderNumber || '';
+
+    const matchesSearch =
+      clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      businessClient.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      orderId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      groupOrderNumber.toLowerCase().includes(searchQuery.toLowerCase());
+
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -40,37 +69,45 @@ export default function StaffOrdersPage() {
     {
       key: 'clientName',
       header: 'Client',
-      render: (order: Order) => (
-        <div>
-          <p className="font-medium text-slate-900">{order.clientName}</p>
-          <p className="text-sm text-slate-500">{order.businessClient}</p>
-        </div>
-      ),
+      render: (order: any) => {
+        const orderData = order.data?.main_order_information || {};
+        return (
+          <div>
+            <p className="font-medium text-slate-900">{orderData.client_name || 'Processing...'}</p>
+            <p className="text-sm text-slate-500">{orderData.business_client || order.platform?.name}</p>
+          </div>
+        );
+      },
     },
     {
       key: 'requestedDate',
       header: 'Requested Date',
+      render: (order: any) => {
+        const orderData = order.data?.main_order_information || {};
+        return orderData.requested_pick_up_date || '—';
+      }
     },
     {
       key: 'numberOfGuests',
       header: 'Guests',
-      render: (order: Order) => (
-        <span className="font-medium">{order.numberOfGuests}</span>
-      ),
+      render: (order: any) => {
+        const orderData = order.data?.main_order_information || {};
+        return <span className="font-medium">{orderData.number_of_guests || '—'}</span>;
+      },
     },
     {
       key: 'status',
       header: 'Status',
-      render: (order: Order) => (
-        <Badge variant={getStatusBadgeVariant(order.status)}>
-          {formatStatus(order.status)}
+      render: (order: any) => (
+        <Badge variant={getStatusBadgeVariant(order.status.toLowerCase() as any)}>
+          {formatStatus(order.status.toLowerCase() as any)}
         </Badge>
       ),
     },
     {
       key: 'actions',
       header: '',
-      render: (order: Order) => (
+      render: (order: any) => (
         <div className="flex gap-2">
           <Button
             variant="ghost"
@@ -80,11 +117,11 @@ export default function StaffOrdersPage() {
           >
             View
           </Button>
-          {order.status === 'sent' && (
+          {(order.status === 'SENT' || order.status === 'READY_TO_SEND') && (
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => alert('Downloading...')}
+              onClick={() => toast.success('Exporting...')}
               leftIcon={<DownloadIcon className="w-4 h-4" />}
             >
               Export
@@ -97,17 +134,28 @@ export default function StaffOrdersPage() {
 
   const statusOptions = [
     { value: 'all', label: 'All Statuses' },
-    { value: 'processing', label: 'Processing' },
-    { value: 'needs_review', label: 'Needs Review' },
-    { value: 'ready_to_send', label: 'Ready to Send' },
-    { value: 'sent', label: 'Sent' },
-    { value: 'failed', label: 'Failed' },
+    { value: 'PROCESSING', label: 'Processing' },
+    { value: 'NEEDS_MANUAL_REVIEW', label: 'Needs Review' },
+    { value: 'READY_TO_SEND', label: 'Ready to Send' },
+    { value: 'SENT', label: 'Sent' },
+    { value: 'FAILED', label: 'Failed' },
   ];
 
   return (
     <PageContainer
       title="My Orders"
       description="View and track orders from your uploads"
+      action={
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => fetchOrders(false)}
+          disabled={isRefreshing}
+          leftIcon={<RefreshIcon className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />}
+        >
+          Refresh
+        </Button>
+      }
     >
       {/* Filters */}
       <div className="mb-6 flex flex-col sm:flex-row gap-4">
@@ -131,8 +179,8 @@ export default function StaffOrdersPage() {
         <Table
           columns={columns}
           data={filteredOrders}
-          keyExtractor={(order) => order.id}
-          emptyMessage="No orders found"
+          keyExtractor={(item, index) => item.id || `order-${index}`}
+          emptyMessage={loading ? 'Loading orders...' : 'No orders found'}
         />
       </TableCard>
     </PageContainer>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/src/utils/prisma';
 import { requireAdmin, unauthorizedResponse, forbiddenResponse } from '@/app/api/auth/helpers';
-import { PlatformStatus } from '@prisma/client';
+import { Status } from '@prisma/client';
 
 // PATCH update platform (admin only)
 export async function PATCH(
@@ -37,7 +37,7 @@ export async function PATCH(
     }
 
     // Prepare update data
-    const updateData: { name?: string; status?: PlatformStatus } = {};
+    const updateData: { name?: string; status?: Status } = {};
 
     if (name !== undefined) {
       // Check if new name conflicts with existing platform
@@ -56,7 +56,7 @@ export async function PATCH(
     }
 
     if (status !== undefined) {
-      updateData.status = status === 'active' ? PlatformStatus.ACTIVE : PlatformStatus.DISABLED;
+      updateData.status = status === 'active' ? Status.ACTIVE : Status.DISABLED;
     }
 
     // Update platform
@@ -70,7 +70,7 @@ export async function PATCH(
       platform: {
         id: updatedPlatform.id,
         name: updatedPlatform.name,
-        status: updatedPlatform.status === PlatformStatus.ACTIVE ? 'active' as const : 'disabled' as const,
+        status: updatedPlatform.status === Status.ACTIVE ? 'active' as const : 'disabled' as const,
         lastUpdated: updatedPlatform.updatedAt.toISOString().split('T')[0],
       },
     });

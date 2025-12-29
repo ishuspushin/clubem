@@ -1,0 +1,341 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "catercow-platform-schema",
+  "version": "1.0.0",
+  "name": "CaterCow",
+  "description": "Schema for parsing CaterCow group order PDFs",
+
+  "platform_info": {
+    "platform_id": "catercow",
+    "business_client": "Group - CaterCow",
+    "document_types": ["cover_sheet"],
+    "combined_document": true,
+    "order_type": "group_order_with_names"
+  },
+
+  "detection": {
+    "description": "Patterns to identify this PDF as a CaterCow order",
+    "method": "pattern_match",
+    "min_matches": 2,
+    "patterns": [
+      "CaterCow",
+      "catercow\\.com",
+      "CaterCow Support",
+      "CaterCow Order",
+      "CaterCow labels",
+      "Order #\\d+",
+      "Group Order\\s*Poll"
+    ]
+  },
+
+  "document_structure": {
+    "description": "CaterCow provides all info in one document",
+    "pages": {
+      "all": {
+        "page_range": [1, -1],
+        "contains": ["logistics", "order_details", "items_with_names"]
+      }
+    },
+    "footer_pattern": "CaterCow Order \\d+.*Page \\d+ of \\d+"
+  },
+
+  "extraction_rules": {
+
+    "main_order_info": {
+      "description": "Order-level information from logistics section",
+      "source_pages": [1],
+
+      "fields": {
+        "order_number": {
+          "pattern": "Order #(\\d+)",
+          "group": 1,
+          "type": "string",
+          "required": true
+        },
+
+        "order_date": {
+          "pattern": "Date\\s+(?:\\w+\\s+)?(\\w+\\s+\\d{1,2},?\\s*\\d{4})",
+          "group": 1,
+          "type": "date",
+          "required": true
+        },
+
+        "delivery_time": {
+          "pattern": "Delivery Time\\s+(\\d{1,2}:\\d{2}\\s*(?:AM|PM)?\\s*-\\s*\\d{1,2}:\\d{2}\\s*(?:AM|PM)?)",
+          "group": 1,
+          "type": "string",
+          "required": true,
+          "flags": "i"
+        },
+
+        "company": {
+          "pattern": "Company\\s+([^\\n]+)",
+          "group": 1,
+          "type": "string",
+          "required": true,
+          "maps_to": "client_name",
+          "post_process": ["trim"]
+        },
+
+        "contact": {
+          "pattern": "Contact\\s+([^\\n]+)",
+          "group": 1,
+          "type": "string",
+          "post_process": ["trim"]
+        },
+
+        "phone": {
+          "pattern": "Phone Number\\s+([\\d\\-]+)",
+          "group": 1,
+          "type": "phone"
+        },
+
+        "address": {
+          "method": "section_extract",
+          "section_start": "Address",
+          "section_end": "Order Details|Package",
+          "join_lines": true,
+          "type": "string",
+          "post_process": ["normalize_whitespace"]
+        },
+
+        "address_simple": {
+          "pattern": "Address\\s*([^\\n]+(?:\\n(?:UNIT:|\\d)[^\\n]+)?(?:\\n[A-Z][^\\n]+)?)",
+          "group": 1,
+          "type": "string",
+          "post_process": ["normalize_whitespace"]
+        },
+
+        "headcount": {
+          "pattern": "Headcount\\s+(\\d+)\\s*people",
+          "group": 1,
+          "type": "integer",
+          "required": true
+        },
+
+        "package": {
+          "pattern": "Package\\s+([^\\n]+)",
+          "group": 1,
+          "type": "string"
+        },
+
+        "presentation": {
+          "pattern": "Presentation\\s+([^\\n]+)",
+          "group": 1,
+          "type": "string"
+        },
+
+        "group_order_poll": {
+          "pattern": "Group Order\\s*Poll\\s*([^\\n]+)",
+          "group": 1,
+          "type": "string"
+        },
+
+        "delivery_type": {
+          "method": "conditional",
+          "conditions": [
+            {"pattern": "Delivery", "value": "Delivery"},
+            {"pattern": "Pickup", "value": "Pickup"}
+          ],
+          "default": "Delivery"
+        },
+
+        "text_code": {
+          "pattern": "please text:\\s*(\\d+)",
+          "group": 1,
+          "type": "string"
+        }
+      }
+    },
+
+    "guest_sections": {
+      "description": "CaterCow embeds guest names with specific items as modifications",
+      "type": "embedded_names",
+
+      "section_detection": {
+        "method": "item_list",
+        "description": "Items listed as 'Nx Item Name: Description' with guest modifications below"
+      }
+    },
+
+    "individual_orders": {
+      "description": "Items with optional guest-specific modifications",
+      "source": "all_pages",
+
+      "item_detection": {
+        "method": "pattern_match",
+        "pattern": "(?:▢\\s*)?(\\d+)x\\s+([^:]+):\\s*([^\\n]+)",
+        "description": "Matches '1x Item Name: Description'",
+        "captures": {
+          "quantity": 1,
+          "item_name": 2,
+          "description": 3
+        }
+      },
+
+      "guest_modification_detection": {
+        "pattern": "(?:▢\\s*)?([A-Z][a-z]+(?:\\s+[A-Z][a-z\\-]+)+):\\s*(.+)",
+        "description": "Matches 'First Last: modification text'",
+        "captures": {
+          "guest_name": 1,
+          "modification": 2
+        },
+        "special_patterns": {
+          "allergy": "HAS ALLERGIES:\\s*(.+)",
+          "request": "^(?!HAS ALLERGIES)(.+)"
+        }
+      },
+
+      "fields": {
+        "quantity": {
+          "source": "item_header",
+          "capture_group": 1,
+          "type": "integer",
+          "required": true
+        },
+
+        "item_name": {
+          "source": "item_header",
+          "capture_group": 2,
+          "type": "string",
+          "required": true,
+          "post_process": ["trim"]
+        },
+
+        "description": {
+          "source": "item_header",
+          "capture_group": 3,
+          "type": "string",
+          "post_process": ["trim"]
+        },
+
+        "guest_modifications": {
+          "method": "collect_named",
+          "pattern": "(?:▢\\s*)?([A-Z][a-z]+(?:\\s+[A-Z][a-z\\-]+)+):\\s*(?!HAS ALLERGIES)([^\\n]+)",
+          "until": "next_item|end_of_page",
+          "output_type": "array_of_objects",
+          "object_fields": {
+            "guest_name": 1,
+            "modification": 2
+          }
+        },
+
+        "guest_allergies": {
+          "method": "collect_named",
+          "pattern": "(?:▢\\s*)?([A-Z][a-z]+(?:\\s+[A-Z][a-z\\-]+)+):\\s*HAS ALLERGIES:\\s*([^\\n]+)",
+          "until": "next_item|end_of_page",
+          "output_type": "array_of_objects",
+          "object_fields": {
+            "guest_name": 1,
+            "allergies": 2
+          }
+        }
+      },
+
+      "output_structure": {
+        "description": "Expand items: create one record per quantity, assign guest names where available",
+        "expansion_rules": {
+          "method": "quantity_expand",
+          "guest_assignment": {
+            "priority": ["guest_modifications", "guest_allergies"],
+            "unnamed_template": "Guest {n}"
+          }
+        }
+      }
+    }
+  },
+
+  "post_processing": {
+    "modifications_vs_comments": {
+      "comment_indicators": [
+        "HAS ALLERGIES",
+        "\\bplease\\b",
+        "on the side",
+        "on side"
+      ],
+      "modification_indicators": [
+        "instead of",
+        "no\\s+\\w+",
+        "add\\s+\\w+",
+        "extra",
+        "leave off",
+        "without"
+      ]
+    },
+
+    "text_cleanup": {
+      "remove_patterns": [
+        "▢",
+        "CaterCow Order \\d+.*Page \\d+ of \\d+",
+        "Need Help\\?.*Google Directions"
+      ],
+      "normalize_whitespace": true
+    },
+
+    "guest_name_cleanup": {
+      "remove_suffixes": ["HAS ALLERGIES"],
+      "normalize": true
+    }
+  },
+
+  "output_mapping": {
+    "main_order_information": {
+      "business_client": {"source": "platform_info.business_client"},
+      "client_name": {"source": "main_order_info.company"},
+      "client_information": {
+        "template": "{address}, Contact: {contact}, Phone: {phone}",
+        "sources": {
+          "address": "main_order_info.address_simple",
+          "contact": "main_order_info.contact",
+          "phone": "main_order_info.phone"
+        }
+      },
+      "order_subtotal": {"value": null, "note": "CaterCow does not show subtotal on order form"},
+      "requested_pick_up_time": {"source": "main_order_info.delivery_time"},
+      "requested_pick_up_date": {"source": "main_order_info.order_date"},
+      "number_of_guests": {"source": "main_order_info.headcount"},
+      "delivery": {"source": "main_order_info.delivery_type"}
+    },
+
+    "group_orders": {
+      "group_order_number": {"source": "main_order_info.order_number"},
+      "pick_time": {"source": "main_order_info.delivery_time"}
+    },
+
+    "individual_orders": {
+      "group_order_number": {"source": "main_order_info.order_number"},
+      "guest_name": {"source": "individual_orders.guest_name", "default": "Unassigned"},
+      "item_name": {"source": "individual_orders.item_name"},
+      "modifications": {"source": "individual_orders.modifications"},
+      "comments": {"source": "individual_orders.allergies_and_requests"}
+    }
+  },
+
+  "examples": {
+    "item_with_guest_mod": {
+      "input": "▢ 3x Chicken Shawarma Bowl: Mediterranean-spiced chicken thigh over farro (wheat grain), mixed greens with roasted beets\n▢ Bennett Reiss: jasmine rice instead of faro",
+      "expected_output": {
+        "item_name": "Chicken Shawarma Bowl",
+        "quantity": 3,
+        "guest_modifications": [
+          {"guest_name": "Bennett Reiss", "modification": "jasmine rice instead of faro"}
+        ]
+      }
+    },
+
+    "item_with_allergy": {
+      "input": "▢ 2x Crispy Caesar Salad: Crispy leaf blend, baby kale...\n▢ Zhen Xia-Nguyen: HAS ALLERGIES: Dairy. Dressing on the side please!! TY!!!\n▢ Kelly Simchowitz: Dressing on side please!",
+      "expected_output": {
+        "item_name": "Crispy Caesar Salad",
+        "quantity": 2,
+        "guest_allergies": [
+          {"guest_name": "Zhen Xia-Nguyen", "allergies": "Dairy"}
+        ],
+        "guest_modifications": [
+          {"guest_name": "Zhen Xia-Nguyen", "modification": "Dressing on the side please"},
+          {"guest_name": "Kelly Simchowitz", "modification": "Dressing on side please"}
+        ]
+      }
+    }
+  }
+}

@@ -106,7 +106,7 @@ export default function MyUploadsPage() {
         <Table
           columns={columns}
           data={filteredUploads}
-          keyExtractor={(upload) => upload.id}
+          keyExtractor={(item, index) => item.id || `upload-${index}`}
           emptyMessage="No uploads found"
         />
       </TableCard>

@@ -1,0 +1,43 @@
+{
+  "job_id": "79a6bd82-618e-41f7-94de-48e1cb87fa2e",
+  "status": "completed",
+  "created_at": 1766657040,
+  "updated_at": 1766657043,
+  "payload": {
+    "type": "parse",
+    "file_count": 1
+  },
+  "result": {
+    "files": [
+      {
+        "pdf_path": "data\\uploads\\79a6bd82-618e-41f7-94de-48e1cb87fa2e\\GrubhuUnedited.pdf",
+        "platform_id": "grubhub",
+        "output_json_path": "data\\outputs\\79a6bd82-618e-41f7-94de-48e1cb87fa2e\\Group - Grubhub - Nov 10, 2025 - 25.json",
+        "output": {
+          "main_order_information": {
+            "business_client": "Group - Grubhub",
+            "client_name": "Allen & Company",
+            "client_information": "TEAM DELIVERY 5 E 55th St 10th floor Deliver by November 10, New York, NY 10022 2025, 12:00 PM (212) 339-2268, Phone: 212",
+            "order_subtotal": null,
+            "requested_pick_up_time": "9:27 AM",
+            "requested_pick_up_date": "Nov 10, 2025",
+            "number_of_guests": 25,
+            "delivery": "Delivery"
+          },
+          "group_orders": [
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "pick_time": "9:27 AM"
+            }
+          ],
+          "individual_orders": [],
+          "metadata": {
+            "platform": "grubhub",
+            "source_file": "data\\uploads\\79a6bd82-618e-41f7-94de-48e1cb87fa2e\\GrubhuUnedited.pdf"
+          }
+        }
+      }
+    ]
+  },
+  "error": null
+}
