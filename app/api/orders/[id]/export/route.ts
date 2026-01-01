@@ -178,7 +178,8 @@ export async function GET(
             const buffer = await workbook.xlsx.writeBuffer();
             const safeExcelFilename = `order_${order.groupOrderNumber}`.replace(/[^\x00-\x7F]/g, '_');
 
-            return new NextResponse(buffer as Buffer, {
+            // Use Uint8Array to ensure compatibility with NextResponse body
+            return new NextResponse(new Uint8Array(buffer as ArrayBuffer), {
                 headers: {
                     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                     'Content-Disposition': `attachment; filename="${safeExcelFilename}.xlsx"`,
