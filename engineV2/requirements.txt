@@ -70,3 +70,8 @@ ipython==9.8.0
 # Windows Production Server (Latest)
 # ============================================
 waitress==3.0.2
+
+# ============================================
+# Linux Production Server (Latest)
+# ============================================
+gunicorn==23.0.0
