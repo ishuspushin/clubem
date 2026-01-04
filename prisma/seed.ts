@@ -4,26 +4,27 @@ import bcrypt from "bcrypt";
 import { env } from "@/src/utils/consts";
 
 async function main() {
-    const adminUsername = env.admin.username
+    const adminEmail = env.admin.email
     const adminPassword = env.admin.password
     const saltRounds = env.bcrypt.saltRounds
 
-    if (!adminUsername || !adminPassword || !saltRounds) {
-        console.error('Admin username or password is not set in the environment variables')
+    if (!adminEmail || !adminPassword || !saltRounds) {
+        console.error('Admin email or password is not set in the environment variables')
         process.exit(1)
     }
 
     const hashedPassword = await bcrypt.hash(adminPassword, Number(saltRounds))
 
     await prisma.user.upsert({
-        where: { username: adminUsername },
+        where: { email: adminEmail },
         update: {
             password: hashedPassword,
             role: UserRole.ADMIN,
             isApproved: true, // Admin is always approved
         },
         create: {
-            username: adminUsername,
+            email: adminEmail,
+            name: adminEmail.split('@')[0],
             password: hashedPassword,
             role: UserRole.ADMIN,
             isApproved: true, // Admin is always approved

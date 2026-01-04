@@ -32,7 +32,8 @@ enum FieldLevel {
 
 model User {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  username   String   @unique
+  email      String   @unique
+  name       String?
   password   String
   role       UserRole
   isApproved Boolean  @default(false)
@@ -45,6 +46,10 @@ model User {
   googleAccessToken  String?
   googleRefreshToken String?
   googleTokenExpiry  DateTime?
+
+  // Forgot Password
+  resetPasswordToken       String?
+  resetPasswordTokenExpiry DateTime?
 }
 
 model Platform {

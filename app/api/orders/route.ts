@@ -4,6 +4,7 @@ import { getAuthenticatedUserFromId, unauthorizedResponse } from '@/app/api/auth
 import { OrderStatus } from '@prisma/client';
 
 const ENGINE_URL = process.env.ENGINE_URL || 'http://localhost:5000';
+const ENGINE_V2_URL = process.env.ENGINE_V2_URL || 'http://localhost:5000';
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,12 +30,107 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'At least one file is required' }, { status: 400 });
     }
 
-    // 1. Send files to Python engine
+    // Create Order in PROCESSING status immediately
+    const order = await prisma.order.create({
+      data: {
+        status: OrderStatus.PROCESSING,
+        groupOrderNumber: `PENDING-${Date.now().toString().slice(-6)}`,
+        data: {
+          originalFiles: files.map(f => f.name)
+        },
+        platformId: platformId,
+        createdById: userId,
+      },
+    });
+
+    // Process in background
+    // We convert files to buffers to ensure they are available in background
+    const filesData = await Promise.all(files.map(async (file) => ({
+      name: file.name,
+      type: file.type,
+      buffer: Buffer.from(await file.arrayBuffer())
+    })));
+
+    processOrderInBackground(order.id, platformId, filesData).catch(err => {
+      console.error(`Background processing failed for order ${order.id}:`, err);
+    });
+
+    return NextResponse.json({
+      orderId: order.id,
+      status: order.status,
+    }, { status: 201 });
+
+  } catch (error: any) {
+    console.error('Create order error:', error);
+    return NextResponse.json(
+      { error: error.message || 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function processOrderInBackground(orderId: string, platformId: string, filesData: any[]) {
+  try {
+    // Prepare FormData for engines
     const engineFormData = new FormData();
-    for (const file of files) {
-      engineFormData.append('files', file);
+    for (const file of filesData) {
+      const blob = new Blob([file.buffer], { type: file.type });
+      engineFormData.append('files', blob, file.name);
     }
 
+    // 1. Try Engine V2 (Sync)
+    try {
+      console.log(`[Background] Attempting Engine V2 extraction for order ${orderId}...`);
+      const v2Response = await fetch(`${ENGINE_V2_URL}/api/extract`, {
+        method: 'POST',
+        body: engineFormData,
+      });
+
+      if (v2Response.ok) {
+        const v2Result = await v2Response.json();
+        console.log(`[Background] Engine V2 success for order ${orderId}:`, v2Result.workflow_id);
+
+        if (v2Result.extracted_data && v2Result.extracted_data.length > 0) {
+          const firstResult = v2Result.extracted_data[0];
+
+          if (firstResult) {
+            const outputData = {
+              main_order_information: firstResult.order_level || {},
+              individual_orders: (firstResult.individual_orders || []).map((item: any) => ({
+                ...item,
+                modifications: typeof item.modifications === 'string'
+                  ? item.modifications.split(',').map((s: string) => s.trim()).filter(Boolean)
+                  : (item.modifications || [])
+              })),
+              group_orders: [{
+                group_order_number: firstResult.order_level?.group_order_number,
+                pick_time: firstResult.order_level?.group_order_pick_time
+              }],
+              originalFiles: filesData.map(f => f.name)
+            };
+
+            const groupOrderNumber = firstResult.order_level?.group_order_number ||
+              `PENDING-${Date.now().toString().slice(-6)}`;
+
+            await prisma.order.update({
+              where: { id: orderId },
+              data: {
+                status: OrderStatus.NEEDS_MANUAL_REVIEW,
+                groupOrderNumber: groupOrderNumber,
+                data: outputData as any,
+                engineJobId: `v2_${v2Result.workflow_id}`,
+              },
+            });
+            return;
+          }
+        }
+      }
+    } catch (error) {
+      console.error(`[Background] Engine V2 error for order ${orderId}:`, error);
+    }
+
+    // 2. Fallback to Engine V1 (Async)
+    console.log(`[Background] Falling back to Engine V1 for order ${orderId}...`);
     const engineResponse = await fetch(`${ENGINE_URL}/api/parse`, {
       method: 'POST',
       body: engineFormData,
@@ -46,33 +142,19 @@ export async function POST(request: NextRequest) {
     }
 
     const { job_id } = await engineResponse.json();
-
-    // 2. Create Order in Prisma
-    const order = await prisma.order.create({
+    await prisma.order.update({
+      where: { id: orderId },
       data: {
-        status: OrderStatus.PROCESSING,
-        groupOrderNumber: `PENDING-${Date.now().toString().slice(-6)}`, // Temporary until parsed
-        data: {
-          originalFiles: files.map(f => f.name)
-        }, // Initial data with filenames
         engineJobId: job_id,
-        platformId: platformId,
-        createdById: userId,
       },
     });
 
-    return NextResponse.json({
-      orderId: order.id,
-      status: order.status,
-      engineJobId: job_id
-    }, { status: 201 });
-
   } catch (error: any) {
-    console.error('Create order error:', error);
-    return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
-    );
+    console.error(`[Background] Processing failed for order ${orderId}:`, error);
+    await prisma.order.update({
+      where: { id: orderId },
+      data: { status: OrderStatus.FAILED },
+    });
   }
 }
 
@@ -94,7 +176,7 @@ export async function GET(request: NextRequest) {
       return unauthorizedResponse('Invalid or unapproved user');
     }
 
-    console.log('GET /api/orders - User authenticated:', user.username, 'role:', user.role);
+    console.log('GET /api/orders - User authenticated:', user.email, 'role:', user.role);
 
     const orders = await prisma.order.findMany({
       where: user.role === 'admin' ? {} : { createdById: userId },
@@ -102,7 +184,8 @@ export async function GET(request: NextRequest) {
         platform: true,
         createdBy: {
           select: {
-            username: true,
+            email: true,
+            name: true,
           }
         }
       },
@@ -135,7 +218,8 @@ export async function GET(request: NextRequest) {
                   platform: true,
                   createdBy: {
                     select: {
-                      username: true,
+                      email: true,
+                      name: true,
                     }
                   }
                 }
@@ -148,7 +232,8 @@ export async function GET(request: NextRequest) {
                   platform: true,
                   createdBy: {
                     select: {
-                      username: true,
+                      email: true,
+                      name: true,
                     }
                   }
                 }

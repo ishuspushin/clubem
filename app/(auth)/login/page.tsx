@@ -8,17 +8,26 @@ import { Input } from '@/app/components/ui/Input';
 import { Select } from '@/app/components/ui/Select';
 import { UserRole } from '@/app/types';
 import { RefreshIcon } from '@/app/components/icons';
+import toast from 'react-hot-toast';
+
+type ViewState = 'login' | 'signup' | 'forgot' | 'reset';
 
 export default function LoginPage() {
   const router = useRouter();
   const { login, signup, checkApproval, isAuthenticated, user } = useAuth();
 
-  const [username, setUsername] = useState('');
+  const [view, setView] = useState<ViewState>('login');
+  
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<UserRole>('staff');
+  
+  // Forgot/Reset password states
+  const [resetCode, setResetCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isSignup, setIsSignup] = useState(false);
   const [isWaitingForApproval, setIsWaitingForApproval] = useState(false);
   const [isCheckingApproval, setIsCheckingApproval] = useState(false);
 
@@ -37,7 +46,7 @@ export default function LoginPage() {
         const data = JSON.parse(pendingApproval);
         // Use setTimeout to avoid synchronous setState in effect
         setTimeout(() => {
-          setUsername(data.username);
+          setEmail(data.email);
           setPassword(data.password);
           setRole(data.role);
           setIsWaitingForApproval(true);
@@ -53,47 +62,96 @@ export default function LoginPage() {
     setError('');
     setIsLoading(true);
 
-    if (!username || !password) {
-      setError('Please enter username and password');
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      if (isSignup) {
-        const result = await signup(username, password, role);
+      if (view === 'signup') {
+        if (!email || !password) {
+            setError('Please enter email and password');
+            setIsLoading(false);
+            return;
+        }
+
+        const result = await signup(email, password, role);
 
         if (result.success) {
           if (result.needsApproval) {
             // Store credentials for approval checking
             localStorage.setItem('clubem_pending_approval', JSON.stringify({
-              username,
+              email,
               password,
               role,
             }));
             setIsWaitingForApproval(true);
-            setIsLoading(false);
           } else {
             // Auto-approved (admin), redirect
             router.push(role === 'admin' ? '/admin' : '/app');
           }
         } else {
           setError(result.error || 'Failed to create account');
-          setIsLoading(false);
         }
-      } else {
-        const result = await login(username, password, role);
+      } else if (view === 'login') {
+        if (!email || !password) {
+            setError('Please enter email and password');
+            setIsLoading(false);
+            return;
+        }
+        const result = await login(email, password, role);
 
         if (result.success) {
           router.push(role === 'admin' ? '/admin' : '/app');
         } else {
           setError(result.error || 'Invalid credentials');
-          setIsLoading(false);
+        }
+      } else if (view === 'forgot') {
+        if (!email) {
+            setError('Please enter your email');
+            setIsLoading(false);
+            return;
+        }
+
+        const response = await fetch('/api/auth/forgot-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            toast.success('Reset code sent to your email');
+            setView('reset');
+        } else {
+            setError(data.error || 'Failed to send reset code');
+        }
+      } else if (view === 'reset') {
+        if (!email || !resetCode || !newPassword) {
+            setError('Please fill in all fields');
+            setIsLoading(false);
+            return;
+        }
+
+        const response = await fetch('/api/auth/reset-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, code: resetCode, newPassword }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            toast.success('Password reset successfully');
+            setView('login');
+            setPassword('');
+            setResetCode('');
+            setNewPassword('');
+        } else {
+            setError(data.error || 'Failed to reset password');
         }
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError('An error occurred. Please try again.');
-      setIsLoading(false);
+    } finally {
+        setIsLoading(false);
     }
   };
 
@@ -102,7 +160,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const result = await checkApproval(username, password);
+      const result = await checkApproval(email, password);
 
       if (result.error) {
         setError(result.error);
@@ -129,9 +187,10 @@ export default function LoginPage() {
   const handleBackToLogin = () => {
     localStorage.removeItem('clubem_pending_approval');
     setIsWaitingForApproval(false);
-    setUsername('');
+    setEmail('');
     setPassword('');
     setError('');
+    setView('login');
   };
 
   return (
@@ -170,7 +229,7 @@ export default function LoginPage() {
                 )}
               </p>
               <p className="text-xs text-slate-500 mb-6">
-                Username: <span className="font-mono font-medium">{username}</span>
+                Email: <span className="font-mono font-medium">{email}</span>
               </p>
 
               {error && (
@@ -202,68 +261,123 @@ export default function LoginPage() {
           ) : (
             <>
               {/* Toggle between Login and Signup */}
-              <div className="flex gap-2 mb-6 p-1 bg-slate-100 rounded-lg">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsSignup(false);
-                    setError('');
-                  }}
-                  className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${!isSignup
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                >
-                  Sign In
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsSignup(true);
-                    setError('');
-                  }}
-                  className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${isSignup
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                >
-                  Sign Up
-                </button>
-              </div>
+              {(view === 'login' || view === 'signup') && (
+                  <div className="flex gap-2 mb-6 p-1 bg-slate-100 rounded-lg">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setView('login');
+                        setError('');
+                      }}
+                      className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${view === 'login'
+                        ? 'bg-white text-slate-900 shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                    >
+                      Sign In
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setView('signup');
+                        setError('');
+                      }}
+                      className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${view === 'signup'
+                        ? 'bg-white text-slate-900 shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                    >
+                      Sign Up
+                    </button>
+                  </div>
+              )}
+
+              {view === 'forgot' && (
+                 <div className="mb-6">
+                    <h2 className="text-lg font-semibold text-slate-900">Reset Password</h2>
+                    <p className="text-sm text-slate-500">Enter your email to receive a reset code.</p>
+                 </div>
+              )}
+              
+              {view === 'reset' && (
+                 <div className="mb-6">
+                    <h2 className="text-lg font-semibold text-slate-900">Set New Password</h2>
+                    <p className="text-sm text-slate-500">Enter the code sent to {email} and your new password.</p>
+                 </div>
+              )}
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                <Select
-                  label="Role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as UserRole)}
-                  options={[
-                    { value: 'admin', label: 'Administrator' },
-                    { value: 'staff', label: 'Staff Member' },
-                  ]}
-                />
+                {(view === 'login' || view === 'signup') && (
+                    <Select
+                      label="Role"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value as UserRole)}
+                      options={[
+                        { value: 'admin', label: 'Administrator' },
+                        { value: 'staff', label: 'Staff Member' },
+                      ]}
+                    />
+                )}
 
                 <Input
-                  label="Username"
-                  type="text"
-                  placeholder="Enter your username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  autoComplete="username"
+                  label="Email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                  disabled={view === 'reset'} // Locked during reset
                 />
 
-                <Input
-                  label="Password"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                />
+                {(view === 'login' || view === 'signup') && (
+                    <Input
+                      label="Password"
+                      type="password"
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="current-password"
+                    />
+                )}
+                
+                {view === 'reset' && (
+                    <>
+                        <Input
+                          label="Reset Code"
+                          type="text"
+                          placeholder="Enter 6-digit code"
+                          value={resetCode}
+                          onChange={(e) => setResetCode(e.target.value)}
+                        />
+                        <Input
+                          label="New Password"
+                          type="password"
+                          placeholder="Enter new password"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                        />
+                    </>
+                )}
 
                 {error && (
                   <div className="p-3 rounded-md bg-red-50 border border-red-200">
                     <p className="text-sm text-red-600">{error}</p>
                   </div>
+                )}
+                
+                {view === 'login' && (
+                    <div className="flex justify-end">
+                        <button 
+                            type="button" 
+                            className="text-sm text-blue-600 hover:text-blue-800"
+                            onClick={() => {
+                                setView('forgot');
+                                setError('');
+                            }}
+                        >
+                            Forgot Password?
+                        </button>
+                    </div>
                 )}
 
                 <Button
@@ -272,8 +386,25 @@ export default function LoginPage() {
                   size="lg"
                   isLoading={isLoading}
                 >
-                  {isSignup ? 'Create Account' : 'Sign In'}
+                  {view === 'signup' ? 'Create Account' : 
+                   view === 'login' ? 'Sign In' :
+                   view === 'forgot' ? 'Send Reset Code' :
+                   'Reset Password'}
                 </Button>
+                
+                {(view === 'forgot' || view === 'reset') && (
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                          setView('login');
+                          setError('');
+                      }}
+                      className="w-full"
+                      size="lg"
+                    >
+                      Back to Login
+                    </Button>
+                )}
               </form>
             </>
           )}
@@ -287,4 +418,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

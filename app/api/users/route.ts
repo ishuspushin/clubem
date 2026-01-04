@@ -13,8 +13,8 @@ export async function GET() {
     // Map to frontend User type format
     const mappedUsers = users.map(user => ({
       id: user.id,
-      name: user.username,
-      email: `${user.username}@clubem.com`,
+      name: user.name || user.email.split('@')[0],
+      email: user.email,
       role: user.role.toLowerCase() as 'admin' | 'staff',
       status: user.isApproved ? 'active' as const : 'inactive' as const,
       createdAt: user.createdAt.toISOString().split('T')[0],
@@ -35,12 +35,12 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { username, password, role } = body;
+    const { email, password, role } = body;
 
     // Validate input
-    if (!username || !password) {
+    if (!email || !password) {
       return NextResponse.json(
-        { error: 'Username and password are required' },
+        { error: 'Email and password are required' },
         { status: 400 }
       );
     }
@@ -63,12 +63,12 @@ export async function POST(request: NextRequest) {
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { username },
+      where: { email },
     });
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'Username already exists' },
+        { error: 'Email already exists' },
         { status: 409 }
       );
     }
@@ -80,7 +80,8 @@ export async function POST(request: NextRequest) {
     // Create user - users added from admin panel are auto-approved
     const user = await prisma.user.create({
       data: {
-        username,
+        email,
+        name: email.split('@')[0],
         password: hashedPassword,
         role: validRole,
         isApproved: true, // Admin-created users are automatically approved
@@ -91,8 +92,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       user: {
         id: user.id,
-        name: user.username,
-        email: `${user.username}@clubem.com`,
+        name: user.name || user.email.split('@')[0],
+        email: user.email,
         role: user.role.toLowerCase() as 'admin' | 'staff',
         status: user.isApproved ? 'active' as const : 'inactive' as const,
         createdAt: user.createdAt.toISOString().split('T')[0],

@@ -19,6 +19,7 @@ export default function ManualReviewPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+  const [editedOrderData, setEditedOrderData] = useState<any>({});
   const [editedItems, setEditedItems] = useState<any[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -60,11 +61,19 @@ export default function ManualReviewPage() {
 
   const handleSelectOrder = (order: any) => {
     setSelectedOrder(order);
+    setEditedOrderData(order.data?.main_order_information || {});
     const items = order.data?.individual_orders || [];
     setEditedItems(items.map((item: any, index: number) => ({
       ...item,
       id: item.id || `temp-${index}` // Ensure unique ID for keys
     })));
+  };
+
+  const handleOrderDataChange = (field: string, value: string | number) => {
+    setEditedOrderData((prev: any) => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleItemChange = (itemId: string, field: string, value: string) => {
@@ -89,6 +98,7 @@ export default function ManualReviewPage() {
 
       const updatedData = {
         ...selectedOrder.data,
+        main_order_information: editedOrderData,
         individual_orders: processedItems
       };
 
@@ -222,20 +232,42 @@ export default function ManualReviewPage() {
               {/* Order Summary */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 p-4 bg-slate-50 rounded-md">
                 <div>
-                  <p className="text-xs text-slate-500">Client</p>
-                  <p className="font-medium text-slate-900">{selectedOrder.data?.main_order_information?.client_name || '—'}</p>
+                  <p className="text-xs text-slate-500 mb-1">Client</p>
+                  <Input
+                    value={editedOrderData.client_name || ''}
+                    onChange={(e) => handleOrderDataChange('client_name', e.target.value)}
+                    className="h-8 text-sm"
+                  />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Requested Date</p>
-                  <p className="font-medium text-slate-900">{selectedOrder.data?.main_order_information?.requested_pick_up_date || '—'}</p>
+                  <p className="text-xs text-slate-500 mb-1">Requested Date</p>
+                  <Input
+                    value={editedOrderData.requested_pick_up_date || ''}
+                    onChange={(e) => handleOrderDataChange('requested_pick_up_date', e.target.value)}
+                    className="h-8 text-sm"
+                  />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Guests</p>
-                  <p className="font-medium text-slate-900">{selectedOrder.data?.main_order_information?.number_of_guests || '—'}</p>
+                  <p className="text-xs text-slate-500 mb-1">Guests</p>
+                  <Input
+                    type="number"
+                    value={editedOrderData.number_of_guests || ''}
+                    onChange={(e) => handleOrderDataChange('number_of_guests', parseInt(e.target.value) || 0)}
+                    className="h-8 text-sm"
+                  />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Subtotal</p>
-                  <p className="font-medium text-slate-900">${selectedOrder.data?.main_order_information?.order_subtotal || '0.00'}</p>
+                  <p className="text-xs text-slate-500 mb-1">Subtotal</p>
+                  <div className="relative">
+                    <span className="absolute left-2 top-1.5 text-slate-400 text-sm">$</span>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={editedOrderData.order_subtotal || ''}
+                      onChange={(e) => handleOrderDataChange('order_subtotal', parseFloat(e.target.value) || 0)}
+                      className="h-8 text-sm pl-5"
+                    />
+                  </div>
                 </div>
               </div>
 

@@ -1,15 +1,69 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { PageContainer, PageSection } from '@/app/components/layout/PageContainer';
 import { Card } from '@/app/components/ui/Card';
 import { Button } from '@/app/components/ui/Button';
 import { Input } from '@/app/components/ui/Input';
 import { useAuth } from '@/app/context/AuthContext';
+import { toast } from 'react-hot-toast';
 
 export default function StaffSettingsPage() {
   const { user } = useAuth();
-  const [googleStatus, setGoogleStatus] = React.useState<{ isConnected: boolean; expiry?: string } | null>(null);
+  const [googleStatus, setGoogleStatus] = useState<{ isConnected: boolean; expiry?: string } | null>(null);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+
+  const handleUpdatePassword = async () => {
+    if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
+      toast.error('Please fill in all password fields');
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast.error('New passwords do not match');
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters long');
+      return;
+    }
+
+    setIsUpdatingPassword(true);
+    try {
+      const response = await fetch(`/api/users/${user?.id}/password`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword: passwordForm.currentPassword,
+          newPassword: passwordForm.newPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('Password updated successfully');
+        setPasswordForm({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
+      } else {
+        toast.error(data.error || 'Failed to update password');
+      }
+    } catch (error) {
+      console.error('Update password error:', error);
+      toast.error('An error occurred while updating password');
+    } finally {
+      setIsUpdatingPassword(false);
+    }
+  };
 
   React.useEffect(() => {
     if (user?.id) {
@@ -58,7 +112,7 @@ export default function StaffSettingsPage() {
               <div>
                 <h3 className="text-lg font-medium text-slate-900">Google Sheets</h3>
                 <p className="text-sm text-slate-500">
-                  {googleStatus?.isConnected 
+                  {googleStatus?.isConnected
                     ? `Connected (Expires: ${googleStatus.expiry ? new Date(googleStatus.expiry).toLocaleString() : 'N/A'})`
                     : 'Automate exports directly to Google Sheets without manual pasting.'}
                 </p>
@@ -142,19 +196,30 @@ export default function StaffSettingsPage() {
               label="Current Password"
               type="password"
               placeholder="Enter current password"
+              value={passwordForm.currentPassword}
+              onChange={(e) => setPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
             />
             <Input
               label="New Password"
               type="password"
               placeholder="Enter new password"
-              helperText="Password must be at least 8 characters"
+              helperText="Password must be at least 6 characters"
+              value={passwordForm.newPassword}
+              onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
             />
             <Input
               label="Confirm New Password"
               type="password"
               placeholder="Confirm new password"
+              value={passwordForm.confirmPassword}
+              onChange={(e) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
             />
-            <Button>Update Password</Button>
+            <Button
+              onClick={handleUpdatePassword}
+              isLoading={isUpdatingPassword}
+            >
+              Update Password
+            </Button>
           </div>
         </Card>
       </PageSection>

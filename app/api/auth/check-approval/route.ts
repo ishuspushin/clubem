@@ -5,19 +5,19 @@ import { prisma } from '@/src/utils/prisma';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { username, password } = body;
+    const { email, password } = body;
 
     // Validate input
-    if (!username || !password) {
+    if (!email || !password) {
       return NextResponse.json(
-        { error: 'Username and password are required' },
+        { error: 'Email and password are required' },
         { status: 400 }
       );
     }
 
-    // Find user by username
+    // Find user by email
     const user = await prisma.user.findUnique({
-      where: { username },
+      where: { email },
     });
 
     if (!user) {
@@ -43,8 +43,8 @@ export async function POST(request: NextRequest) {
       isApproved: user.isApproved,
       user: user.isApproved ? {
         id: user.id,
-        name: user.username,
-        email: `${user.username}@clubem.com`,
+        name: user.name || user.email.split('@')[0],
+        email: user.email,
         role: user.role.toLowerCase() as 'admin' | 'staff',
         status: 'active' as const,
         createdAt: user.createdAt.toISOString().split('T')[0],

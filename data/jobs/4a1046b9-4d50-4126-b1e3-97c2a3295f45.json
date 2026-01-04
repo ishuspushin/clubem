@@ -1,0 +1,12 @@
+{
+  "job_id": "4a1046b9-4d50-4126-b1e3-97c2a3295f45",
+  "status": "queued",
+  "created_at": 1767560696,
+  "updated_at": 1767560696,
+  "payload": {
+    "type": "parse",
+    "file_count": 1
+  },
+  "result": null,
+  "error": null
+}

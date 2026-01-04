@@ -29,7 +29,8 @@ export async function GET(
         platform: true,
         createdBy: {
           select: {
-            username: true,
+            email: true,
+            name: true,
           }
         }
       }
@@ -67,7 +68,8 @@ export async function GET(
                 platform: true,
                 createdBy: {
                   select: {
-                    username: true,
+                    email: true,
+                    name: true,
                   }
                 }
               }
@@ -82,7 +84,8 @@ export async function GET(
                 platform: true,
                 createdBy: {
                   select: {
-                    username: true,
+                    email: true,
+                    name: true,
                   }
                 }
               }
@@ -147,7 +150,8 @@ export async function PATCH(
         platform: true,
         createdBy: {
           select: {
-            username: true,
+            email: true,
+            name: true,
           }
         }
       }
@@ -161,12 +165,20 @@ export async function PATCH(
       existingOrder.engineJobId
     ) {
       try {
-        await fetch(`${ENGINE_URL}/api/jobs/${existingOrder.engineJobId}`, {
-          method: 'DELETE',
-        });
+        const jobId = existingOrder.engineJobId;
+        if (jobId.startsWith('v2_')) {
+          const workflowId = jobId.replace('v2_', '');
+          console.log(`Order confirmed. Engine V2 workflow ${workflowId} files were already cleaned up by sync extract.`);
+          // If Engine V2 had a delete endpoint, we would call it here:
+          // await fetch(`${ENGINE_V2_URL}/api/jobs/${workflowId}`, { method: 'DELETE' });
+        } else {
+          console.log(`Order confirmed. Deleting Engine V1 job ${jobId} files...`);
+          await fetch(`${ENGINE_URL}/api/jobs/${jobId}`, {
+            method: 'DELETE',
+          });
+        }
       } catch (err) {
         console.error('Failed to delete engine job files:', err);
-        // We don't fail the request if deletion fails, but we log it
       }
     }
 

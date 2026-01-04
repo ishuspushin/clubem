@@ -347,12 +347,12 @@ export const findUserByEmail = (email: string): User | undefined => {
 };
 
 // Helper to get orders by user
-export const getOrdersByUser = (userName: string): Order[] => {
-  return mockOrders.filter(o => o.uploadedBy === userName);
+export const getOrdersByUser = (email: string): Order[] => {
+  return mockOrders.filter(o => o.uploadedBy === email);
 };
 
 // Helper to get uploads by user
-export const getUploadsByUser = (userName: string): Upload[] => {
-  return mockUploads.filter(u => u.uploadedBy === userName);
-};
+export const getUploadsByUser = (email: string): Upload[] => {
+  return mockUploads.filter(u => u.uploadedBy === email);
+}
 

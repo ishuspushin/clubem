@@ -3,7 +3,8 @@ import { prisma } from '@/src/utils/prisma';
 
 export interface AuthUser {
   id: string;
-  username: string;
+  name: string;
+  email: string;
   role: 'admin' | 'staff';
   isApproved: boolean;
 }
@@ -29,7 +30,8 @@ export async function getAuthenticatedUserFromId(userId: string): Promise<AuthUs
 
     return {
       id: user.id,
-      username: user.username,
+      name: user.name || user.email.split('@')[0],
+      email: user.email,
       role: user.role.toLowerCase() as 'admin' | 'staff',
       isApproved: user.isApproved,
     };
@@ -58,7 +60,8 @@ export async function getAuthenticatedUserById(userId: string): Promise<AuthUser
 
     return {
       id: user.id,
-      username: user.username,
+      name: user.name || user.email.split('@')[0],
+      email: user.email,
       role: user.role.toLowerCase() as 'admin' | 'staff',
       isApproved: user.isApproved,
     };

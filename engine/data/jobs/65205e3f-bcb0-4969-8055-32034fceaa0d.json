@@ -1,0 +1,43 @@
+{
+  "job_id": "65205e3f-bcb0-4969-8055-32034fceaa0d",
+  "status": "completed",
+  "created_at": 1767294115,
+  "updated_at": 1767294116,
+  "payload": {
+    "type": "parse",
+    "file_count": 1
+  },
+  "result": {
+    "files": [
+      {
+        "pdf_path": "data\\uploads\\65205e3f-bcb0-4969-8055-32034fceaa0d\\EzCaterUnedited (1).pdf",
+        "platform_id": "ezcater",
+        "output_json_path": "data\\outputs\\65205e3f-bcb0-4969-8055-32034fceaa0d\\Group - EzCater -  - 0.json",
+        "output": {
+          "main_order_information": {
+            "business_client": "Group - EzCater",
+            "client_name": "",
+            "client_information": "",
+            "order_subtotal": null,
+            "requested_pick_up_time": "",
+            "requested_pick_up_date": "",
+            "number_of_guests": 0,
+            "delivery": "Delivery"
+          },
+          "group_orders": [
+            {
+              "group_order_number": "1C5-3VR",
+              "pick_time": ""
+            }
+          ],
+          "individual_orders": [],
+          "metadata": {
+            "platform": "ezcater",
+            "source_file": "data\\uploads\\65205e3f-bcb0-4969-8055-32034fceaa0d\\EzCaterUnedited (1).pdf"
+          }
+        }
+      }
+    ]
+  },
+  "error": null
+}

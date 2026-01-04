@@ -1,0 +1,382 @@
+{
+  "job_id": "a2775758-d4d5-4f1e-bbb8-9c03bf523a92",
+  "status": "completed",
+  "created_at": 1767294116,
+  "updated_at": 1767294119,
+  "payload": {
+    "type": "parse",
+    "file_count": 1
+  },
+  "result": {
+    "files": [
+      {
+        "pdf_path": "data\\uploads\\a2775758-d4d5-4f1e-bbb8-9c03bf523a92\\GrubhuUnedited.pdf",
+        "platform_id": "grubhub",
+        "output_json_path": "data\\outputs\\a2775758-d4d5-4f1e-bbb8-9c03bf523a92\\Group - Grubhub - Nov 10, 2025 - 25.json",
+        "output": {
+          "main_order_information": {
+            "business_client": "Group - Grubhub",
+            "client_name": "Candice M",
+            "client_information": "Allen & Company 5 E 55th St 10th floor, Phone: (212) 457-8509",
+            "order_subtotal": null,
+            "requested_pick_up_time": "12:00 PM",
+            "requested_pick_up_date": "Nov 10, 2025",
+            "number_of_guests": 25,
+            "delivery": "Delivery"
+          },
+          "group_orders": [
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "pick_time": "12:00 PM"
+            }
+          ],
+          "individual_orders": [
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Spencer S",
+              "item_name": "Classic Mediterranean Salad",
+              "modifications": [
+                "Half Romaine / Half Greens",
+                "Lemon Honey Vinaigrette"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Sarah D",
+              "item_name": "Fennel Citrus Salad",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Sarah D",
+              "item_name": "Beets",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Ketan M",
+              "item_name": "Baked Falafel Bowl",
+              "modifications": [
+                "Iceberg / Romaine",
+                "Baked Falafel [V]",
+                "Shatta (Hot Sauce)",
+                "Tahini Yogurt"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Ilana M",
+              "item_name": "Roasted Cauliflower Wrap",
+              "modifications": [
+                "Garlic Roasted Cauliflower",
+                "Tahini Yogurt",
+                "Cut in Half"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Maxine M",
+              "item_name": "Crispy Chicken Bowl",
+              "modifications": [
+                "Spanakorizo",
+                "Iceberg / Romaine",
+                "Crispy Chicken",
+                "Terra Vinaigrette",
+                "Terra Vinaigrette"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Cam D",
+              "item_name": "Street Cart Bowl",
+              "modifications": [
+                "Jasmine Rice",
+                "Iceberg / Romaine",
+                "Crispy Chicken",
+                "Caesar Dressing"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Omar I",
+              "item_name": "Beef Kebab Sliders (Arayes)",
+              "modifications": [
+                "Spanakorizo",
+                "Beef Kebab",
+                "Shatta (Hot Sauce)"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Litesh H",
+              "item_name": "Chicken Shawarma Bowl",
+              "modifications": [
+                "Farro",
+                "Chicken Shawarma",
+                "Schug Aioli (Spicy)"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Krista K",
+              "item_name": "Terra Meal (BYO)",
+              "modifications": [
+                "Chicken Breast",
+                "Farro",
+                "Roasted Cauliflower",
+                "Broccoli",
+                "Tzatziki",
+                "Date Balsamic Vinaigrette",
+                "Add Extra Protein",
+                "Beets [Mezze]"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Tony F",
+              "item_name": "Greek Salad",
+              "modifications": [
+                "Mixed Greens",
+                "Lemon Honey Vinaigrette",
+                "No Spicy Tomatoes",
+                "Lemon Honey Vinaigrette",
+                "No Restrictions"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Jane B",
+              "item_name": "Street Cart Bowl",
+              "modifications": [
+                "Jasmine Rice",
+                "Chicken Shawarma",
+                "Yogurt Dill",
+                "Side of Pita"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Jodi G",
+              "item_name": "Greek Salad",
+              "modifications": [
+                "Iceberg / Romaine",
+                "Chicken Shawarma",
+                "Date Balsamic Vinaigrette"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "MaryKate S",
+              "item_name": "Terra Market Plate",
+              "modifications": [
+                "Hummus with Aleppo",
+                "Chickpeas",
+                "Tzatziki",
+                "Moroccan Carrots",
+                "Greek Yogurt Slaw",
+                "Veggie Pickles",
+                "Pita",
+                "Crispy Chicken",
+                "Yogurt Dill",
+                "Smoked Pepper Mayo"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Michael M",
+              "item_name": "Terra Meal (BYO)",
+              "modifications": [
+                "Chicken Shawarma",
+                "Spanakorizo",
+                "Honey Harissa Carrots",
+                "Broccoli",
+                "Muhammara (Red Pepper",
+                "Walnut Spread)",
+                "Cilantro Chimmichurri",
+                "Zucchini [Mezze]"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Cathy T",
+              "item_name": "Terra Market Plate",
+              "modifications": [
+                "Hummus",
+                "Beets",
+                "Spicy Tomatoes",
+                "Zucchini",
+                "Farro Citrus Salad",
+                "No Pita",
+                "Chicken Shawarma"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Cathy T",
+              "item_name": "Spindrift Half Tea Half Lemonade",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Christopher F",
+              "item_name": "Glazed Salmon Bowl",
+              "modifications": [
+                "Jasmine Rice",
+                "Spanakorizo",
+                "Salmon",
+                "Tahini Yogurt"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Robert S",
+              "item_name": "Terra Market Plate",
+              "modifications": [
+                "Hummus with Aleppo",
+                "Chickpeas",
+                "Muhammara",
+                "Tzatziki",
+                "Beets",
+                "Veggie Pickles",
+                "Pita",
+                "Baked Falafel [V]",
+                "Side of Pita",
+                "Schug Aioli (Spicy Herb Blend)"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Jack V",
+              "item_name": "Crispy Caesar",
+              "modifications": [
+                "Mixed Greens",
+                "Chicken Breast",
+                "Sauce on the Side",
+                "Caesar Dressing"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Somil A",
+              "item_name": "Harvest Salad",
+              "modifications": [
+                "(212) 339-2268 Half Romaine / Half Greens",
+                "Chicken Breast",
+                "Add Egg"
+              ],
+              "comments": "dressing on side please"
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Jack W",
+              "item_name": "Street Cart Bowl",
+              "modifications": [
+                "Jasmine Rice",
+                "Chicken Shawarma",
+                "Shatta (Hot Sauce)"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "James P",
+              "item_name": "Chicken Shawarma Bowl",
+              "modifications": [
+                "Jasmine Rice",
+                "Chicken Shawarma",
+                "Yogurt Dill"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Matthew T",
+              "item_name": "Chicken Shawarma Salad",
+              "modifications": [
+                "Mixed Greens",
+                "Chicken Shawarma",
+                "Toss with Tahini Yogurt"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Allan G",
+              "item_name": "Protein Meal",
+              "modifications": [
+                "Chicken Shawarma",
+                "Beef Kebab",
+                "Spanakorizo",
+                "Farro",
+                "Honey Harissa Carrots",
+                "Cucumber",
+                "Spicy Tomatoes",
+                "Toasted Almonds",
+                "Smoked Pepper Mayo"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Allan G",
+              "item_name": "Pita",
+              "modifications": [],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Ben S",
+              "item_name": "Protein Meal",
+              "modifications": [
+                "Chicken Shawarma",
+                "Chicken Breast",
+                "Iceberg / Romaine",
+                "Broccoli",
+                "Cauliflower",
+                "Zucchini",
+                "Lemon Honey Vinaigrette"
+              ],
+              "comments": ""
+            },
+            {
+              "group_order_number": "#81853162 \u2014 3151834",
+              "guest_name": "Anton S",
+              "item_name": "Crispy Harissa Chicken Wrap",
+              "modifications": [
+                "Yogurt Dill",
+                "Chicken Shawarma",
+                "Cut in Half"
+              ],
+              "comments": ""
+            }
+          ],
+          "metadata": {
+            "platform": "grubhub",
+            "source_file": "data\\uploads\\a2775758-d4d5-4f1e-bbb8-9c03bf523a92\\GrubhuUnedited.pdf"
+          }
+        }
+      }
+    ]
+  },
+  "error": null
+}

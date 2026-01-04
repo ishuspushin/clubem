@@ -1,0 +1,231 @@
+2026-01-04 02:29:16 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-04 02:29:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-04 02:29:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-04 02:29:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-04 02:29:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-04 02:29:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-04 02:29:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-04 02:29:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-04 02:29:17 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-04 02:29:17 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-04 02:29:17 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-04 02:29:32 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-04 02:29:32 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-04 02:29:32 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-04 02:29:32 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-04 02:29:32 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-04 02:29:32 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-04 02:29:32 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-04 02:29:32 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-04 02:29:32 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-04 02:29:32 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-04 02:29:32 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-04 02:40:04 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-04 02:40:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-04 02:40:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-04 02:40:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-04 02:40:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-04 02:40:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-04 02:40:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-04 02:40:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-04 02:40:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-04 02:40:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-04 02:40:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-04 02:40:19 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-04 02:40:19 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-04 02:40:19 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-04 02:40:19 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-04 02:40:19 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-04 02:40:19 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-04 02:40:19 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-04 02:40:19 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-04 02:40:20 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-04 02:40:20 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-04 02:40:20 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:05:25 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:05:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:05:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:05:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:05:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:05:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:05:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:05:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:05:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:05:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:05:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:05:40 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:05:40 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:05:40 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:05:40 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:05:40 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:05:40 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:05:40 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:05:40 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:05:40 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:05:40 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:05:40 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:10:06 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:10:06 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:10:06 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:10:06 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:10:06 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:10:06 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:10:06 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:10:06 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:10:06 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:10:06 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:10:06 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:10:21 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:10:21 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:10:21 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:10:21 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:10:21 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:10:21 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:10:21 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:10:21 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:10:21 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:10:21 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:10:21 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:10:58 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:10:58 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:10:58 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:10:58 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:10:58 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:10:58 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:10:58 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:10:58 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:10:58 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:10:58 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:10:58 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:50:10 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:50:10 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:50:10 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:50:10 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:50:10 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:50:10 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:50:10 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:50:10 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:50:11 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:50:11 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:50:11 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:50:25 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:50:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:50:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:50:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:50:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:50:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:50:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:50:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:50:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:50:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:50:25 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:50:38 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:50:38 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:50:38 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:50:38 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:50:38 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:50:38 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:50:38 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:50:38 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:50:39 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:50:39 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:50:39 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:50:52 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:50:52 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:50:52 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:50:52 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:50:52 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:50:52 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:50:52 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:50:52 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:50:52 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:50:52 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:50:52 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:51:04 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:51:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:51:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:51:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:51:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:51:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:51:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:51:04 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:51:05 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:51:05 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:51:05 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:51:16 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:51:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:51:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:51:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:51:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:51:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:51:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:51:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:51:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:51:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:51:16 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:51:30 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:51:30 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:51:30 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:51:30 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:51:30 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:51:30 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:51:30 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:51:30 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:51:30 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:51:30 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:51:30 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:51:42 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:51:42 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:51:42 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:51:42 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:51:42 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:51:42 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:51:42 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:51:42 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:51:42 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:51:42 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:51:42 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:51:56 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:51:56 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:51:56 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:51:56 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:51:56 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:51:56 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:51:56 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:51:56 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:51:56 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:51:56 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:51:56 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:52:31 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:52:31 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:52:31 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:52:31 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:52:31 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:52:31 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:52:31 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:52:31 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:52:31 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:52:31 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:52:31 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:52:43 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:52:43 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:52:43 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:52:43 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:52:43 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:52:43 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:52:43 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:52:43 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:52:44 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:52:44 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:52:44 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully
+2026-01-05 02:52:59 - group_order_extraction - [32mINFO[0m - logger:setup_logger:162 - Logger 'group_order_extraction' initialized successfully
+2026-01-05 02:52:59 - group_order_extraction - [32mINFO[0m - __init__:create_app:78 - ============================================================
+2026-01-05 02:52:59 - group_order_extraction - [32mINFO[0m - __init__:create_app:79 - Group Order Extraction System Starting...
+2026-01-05 02:52:59 - group_order_extraction - [32mINFO[0m - __init__:create_app:80 - Version: 1.0.0
+2026-01-05 02:52:59 - group_order_extraction - [32mINFO[0m - __init__:create_app:81 - Environment: Development
+2026-01-05 02:52:59 - group_order_extraction - [32mINFO[0m - __init__:create_app:82 - ============================================================
+2026-01-05 02:52:59 - group_order_extraction - [32mINFO[0m - __init__:create_app:96 - CORS enabled for API endpoints
+2026-01-05 02:52:59 - group_order_extraction - [32mINFO[0m - __init__:create_app:103 - Storage directories verified
+2026-01-05 02:52:59 - group_order_extraction - [32mINFO[0m - __init__:create_app:110 - API components initialized
+2026-01-05 02:52:59 - group_order_extraction - [32mINFO[0m - __init__:create_app:118 - API blueprint registered at /api
+2026-01-05 02:52:59 - group_order_extraction - [32mINFO[0m - __init__:create_app:152 - Application factory completed successfully

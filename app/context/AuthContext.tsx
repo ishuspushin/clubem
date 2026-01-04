@@ -4,9 +4,9 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { UserRole, AuthState, type User } from '@/app/types';
 
 interface AuthContextType extends AuthState {
-  login: (username: string, password: string, role: UserRole) => Promise<{ success: boolean; error?: string; needsApproval?: boolean }>;
-  signup: (username: string, password: string, role: UserRole) => Promise<{ success: boolean; error?: string; needsApproval?: boolean }>;
-  checkApproval: (username: string, password: string) => Promise<{ isApproved: boolean; user?: User | null; error?: string }>;
+  login: (email: string, password: string, role: UserRole) => Promise<{ success: boolean; error?: string; needsApproval?: boolean }>;
+  signup: (email: string, password: string, role: UserRole) => Promise<{ success: boolean; error?: string; needsApproval?: boolean }>;
+  checkApproval: (email: string, password: string) => Promise<{ isApproved: boolean; user?: User | null; error?: string }>;
   logout: () => void;
 }
 
@@ -46,14 +46,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [authState, isLoading]);
 
-  const login = async (username: string, password: string, role: UserRole): Promise<{ success: boolean; error?: string }> => {
+  const login = async (email: string, password: string, role: UserRole): Promise<{ success: boolean; error?: string }> => {
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const data = await response.json();
-      
+
       // Verify the role matches (optional check, or you can remove role from login)
       if (data.user.role !== role) {
         return { success: false, error: 'Role mismatch' };
@@ -79,14 +79,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signup = async (username: string, password: string, role: UserRole): Promise<{ success: boolean; error?: string; needsApproval?: boolean }> => {
+  const signup = async (email: string, password: string, role: UserRole): Promise<{ success: boolean; error?: string; needsApproval?: boolean }> => {
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password, role }),
+        body: JSON.stringify({ email, password, role }),
       });
 
       if (!response.ok) {
@@ -98,9 +98,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // If user needs approval, don't set them as authenticated
       if (data.needsApproval) {
-        return { 
-          success: true, 
-          needsApproval: true 
+        return {
+          success: true,
+          needsApproval: true
         };
       }
 
@@ -116,14 +116,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const checkApproval = async (username: string, password: string): Promise<{ isApproved: boolean; user?: User | null; error?: string }> => {
+  const checkApproval = async (email: string, password: string): Promise<{ isApproved: boolean; user?: User | null; error?: string }> => {
     try {
       const response = await fetch('/api/auth/check-approval', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
@@ -141,9 +141,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
       }
 
-      return { 
-        isApproved: data.isApproved, 
-        user: data.user || null 
+      return {
+        isApproved: data.isApproved,
+        user: data.user || null
       };
     } catch (error) {
       console.error('Check approval error:', error);

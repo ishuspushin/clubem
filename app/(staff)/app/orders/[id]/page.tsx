@@ -168,6 +168,24 @@ export default function StaffOrderDetailPage({ params }: PageProps) {
     }
   };
 
+  const handleRetryOrder = async () => {
+    try {
+      const response = await fetch(`/api/orders/${id}/retry`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user?.id }),
+      });
+
+      if (!response.ok) throw new Error('Failed to initiate retry');
+
+      toast.success('Retry initiated!');
+      fetchOrder(false);
+    } catch (err: any) {
+      console.error('Retry order error:', err);
+      toast.error(err.message || 'Failed to initiate retry');
+    }
+  };
+
   if (loading) {
     return (
       <PageContainer title="Loading Order...">
@@ -252,6 +270,7 @@ export default function StaffOrderDetailPage({ params }: PageProps) {
             size="sm"
             onClick={() => setIsSendModalOpen(true)}
             leftIcon={<SendIcon className="w-4 h-4" />}
+            disabled={order.status !== 'CONFIRMED'}
           >
             Send Export
           </Button>
@@ -337,6 +356,23 @@ export default function StaffOrderDetailPage({ params }: PageProps) {
                 <p className="text-xs text-violet-600">
                   Our engine is extracting data from your PDF. This usually takes 10-20 seconds.
                 </p>
+              </div>
+            )}
+
+            {order.status === 'FAILED' && (
+              <div className="space-y-3">
+                <div className="p-3 bg-red-50 rounded-md">
+                  <p className="text-sm text-red-700 font-medium">Extraction Failed</p>
+                  <p className="text-xs text-red-600">The engine was unable to parse this file. You can try retrying or contact support.</p>
+                </div>
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  leftIcon={<RefreshIcon className="w-4 h-4" />}
+                  onClick={handleRetryOrder}
+                >
+                  Retry Extraction
+                </Button>
               </div>
             )}
 

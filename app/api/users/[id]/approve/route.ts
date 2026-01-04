@@ -31,8 +31,8 @@ export async function PATCH(
     return NextResponse.json({
       user: {
         id: updatedUser.id,
-        name: updatedUser.username,
-        email: `${updatedUser.username}@clubem.com`,
+        name: updatedUser.name || updatedUser.email.split('@')[0],
+        email: updatedUser.email,
         role: updatedUser.role.toLowerCase() as 'admin' | 'staff',
         status: 'active' as const,
         createdAt: updatedUser.createdAt.toISOString().split('T')[0],

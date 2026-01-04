@@ -76,6 +76,30 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
     }
   };
 
+  const handleRetryOrder = async () => {
+    try {
+      setIsSending(true);
+      const response = await fetch(`/api/orders/${id}/retry`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user?.id }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to initiate retry');
+      }
+
+      toast.success('Retry initiated!');
+      fetchOrder(false);
+    } catch (err: any) {
+      console.error('Retry order error:', err);
+      toast.error(err.message || 'Failed to initiate retry');
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   if (loading) {
     return (
       <PageContainer title="Loading Order...">
@@ -294,7 +318,7 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
 
             <div>
               <p className="text-sm text-slate-500 mb-2">Uploaded By</p>
-              <p className="font-medium text-slate-900">{order.createdBy?.username || 'System'}</p>
+              <p className="font-medium text-slate-900">{order.createdBy?.name || order.createdBy?.email || 'System'}</p>
               <p className="text-xs text-slate-500">{new Date(order.createdAt).toLocaleString()}</p>
             </div>
 
@@ -328,7 +352,24 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
                   Confirmed
                 </div>
               )}
-              {order.status !== 'NEEDS_MANUAL_REVIEW' && order.status !== 'CONFIRMED' && (
+              {order.status === 'FAILED' && (
+                <div className="space-y-3">
+                  <div className="p-3 bg-red-50 rounded-md">
+                    <p className="text-sm text-red-700 font-medium">Extraction Failed</p>
+                    <p className="text-xs text-red-600">The engine was unable to parse this file. You can try retrying or contact support.</p>
+                  </div>
+                  <Button
+                    variant="primary"
+                    className="w-full"
+                    leftIcon={<RefreshIcon className="w-4 h-4" />}
+                    onClick={handleRetryOrder}
+                    isLoading={isSending}
+                  >
+                    Retry Extraction
+                  </Button>
+                </div>
+              )}
+              {order.status !== 'NEEDS_MANUAL_REVIEW' && order.status !== 'CONFIRMED' && order.status !== 'FAILED' && (
                 <div className="text-slate-500 font-medium px-4 py-2 text-center">
                   Status: {formatStatus(order.status.toLowerCase() as any)}
                 </div>

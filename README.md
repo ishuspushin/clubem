@@ -144,7 +144,7 @@ Roles:
 
 Key fields
 
-username – unique login identifier
+email – unique login identifier (replaces username)
 
 password – hashed password
 

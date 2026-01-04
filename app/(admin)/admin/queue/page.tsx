@@ -48,16 +48,18 @@ export default function ProcessingQueuePage() {
 
   const handleRetry = async (orderId: string) => {
     try {
-      const response = await fetch(`/api/orders/${orderId}`, {
-        method: 'PATCH',
+      const response = await fetch(`/api/orders/${orderId}/retry`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: user?.id,
-          status: 'PROCESSING'
+          userId: user?.id
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to retry order');
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to retry order');
+      }
 
       toast.success('Order retry initiated');
       fetchQueue();

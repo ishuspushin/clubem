@@ -30,7 +30,7 @@ export default function UsersPage() {
   const [editingUser, setEditingUser] = useState<UserWithApproval | null>(null);
   const [passwordUser, setPasswordUser] = useState<UserWithApproval | null>(null);
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
     role: 'staff' as UserRole,
   });
@@ -67,14 +67,14 @@ export default function UsersPage() {
     if (user) {
       setEditingUser(user);
       setFormData({
-        username: user.name, // username is stored as name in frontend
+        email: user.email,
         password: '',
         role: user.role,
       });
     } else {
       setEditingUser(null);
       setFormData({
-        username: '',
+        email: '',
         password: '',
         role: 'staff',
       });
@@ -95,9 +95,9 @@ export default function UsersPage() {
 
   const handleSave = async () => {
     setError('');
-    
-    if (!formData.username || (!editingUser && !formData.password)) {
-      setError('Username and password are required');
+
+    if (!formData.email || (!editingUser && !formData.password)) {
+      setError('Email and password are required');
       return;
     }
 
@@ -117,7 +117,7 @@ export default function UsersPage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            username: formData.username,
+            email: formData.email,
             password: formData.password,
             role: formData.role,
           }),
@@ -131,7 +131,7 @@ export default function UsersPage() {
 
         await fetchUsers();
         setIsModalOpen(false);
-        setFormData({ username: '', password: '', role: 'staff' });
+        setFormData({ email: '', password: '', role: 'staff' });
         toast.success('User created successfully');
       }
     } catch (error) {
@@ -286,7 +286,7 @@ export default function UsersPage() {
       render: (user: UserWithApproval) => {
         const isApproved = user.isApproved !== undefined ? user.isApproved : user.status === 'active';
         const isCurrentUser = currentUser?.id === user.id;
-        
+
         return (
           <div className="flex gap-2">
             {!isApproved && (
@@ -371,7 +371,7 @@ export default function UsersPage() {
             }}>
               Cancel
             </Button>
-            <Button onClick={handleSave} disabled={!formData.username || (!editingUser && !formData.password)}>
+            <Button onClick={handleSave} disabled={!formData.email || (!editingUser && !formData.password)}>
               {editingUser ? 'Save Changes' : 'Add User'}
             </Button>
           </>
@@ -384,10 +384,10 @@ export default function UsersPage() {
             </div>
           )}
           <Input
-            label="Username"
-            value={formData.username}
-            onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
-            placeholder="johndoe"
+            label="Email"
+            value={formData.email}
+            onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+            placeholder="john@example.com"
             disabled={!!editingUser}
           />
           {!editingUser && (

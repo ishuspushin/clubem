@@ -1,0 +1,174 @@
+# ============================================
+# Python
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ============================================
+# Virtual Environments
+# ============================================
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# ============================================
+# Environment Variables
+# ============================================
+.env
+.env.local
+.env.*.local
+
+# ============================================
+# IDE / Editors
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# ============================================
+# OS Files
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ============================================
+# Application-Specific
+# ============================================
+# Uploaded PDFs (keep directory structure)
+uploads/*
+!uploads/.gitkeep
+
+# Output files
+outputs/*
+!outputs/.gitkeep
+
+# Logs
+logs/*
+!logs/.gitkeep
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Database files (if using SQLite)
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================
+# Testing
+# ============================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+coverage.xml
+*.cover
+.cache
+nosetests.xml
+test-results/
+
+# ============================================
+# Documentation
+# ============================================
+docs/_build/
+site/
+
+# ============================================
+# Jupyter Notebooks
+# ============================================
+.ipynb_checkpoints
+*.ipynb
+
+# ============================================
+# Package managers
+# ============================================
+pip-log.txt
+pip-delete-this-directory.txt
+Pipfile.lock
+
+# ============================================
+# MyPy
+# ============================================
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ============================================
+# Pyre type checker
+# ============================================
+.pyre/
+
+# ============================================
+# Celery
+# ============================================
+celerybeat-schedule
+celerybeat.pid
+
+# ============================================
+# Flask
+# ============================================
+instance/
+.webassets-cache
+
+# ============================================
+# Scrapy
+# ============================================
+.scrapy
+
+# ============================================
+# Backup files
+# ============================================
+*.bak
+*.backup
+
+# ============================================
+# Large files / Data
+# ============================================
+*.pdf
+*.csv
+*.xlsx
+*.xls
+
+# Keep example files
+!examples/*.pdf
+!tests/fixtures/*.pdf

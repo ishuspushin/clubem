@@ -63,10 +63,10 @@ export function Header({ title }: HeaderProps) {
           </button>
 
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-slate-200 py-1 z-50">
+            <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-slate-200 py-1 z-50">
               <div className="px-4 py-3 border-b border-slate-100">
                 <p className="text-sm font-medium text-slate-900">{user?.name}</p>
-                <p className="text-sm text-slate-500">{user?.email}</p>
+                <p className="text-sm text-slate-500 truncate">{user?.email}</p>
               </div>
               <Link
                 href={settingsPath}
